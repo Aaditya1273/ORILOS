@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Refresh the landing-page clip reel from finished ORILOS clips (CC-licensed sources only).
 #   scripts/reel.sh "Credit one|Credit two" clip1.mp4 clip2.mp4 …
-# Cuts 6-second, muted, 360x640 loops (at 0 s, 9 s and 18 s while the clip is long enough) into public/reel/ and writes reel.json.
+# Cuts 6-second, muted, 540x960 loops (at 0 s, 9 s and 18 s while the clip is long enough) into public/reel/ and writes reel.json.
 set -euo pipefail
 credits="$1"; shift
 out="$(dirname "$0")/../public/reel"
@@ -12,9 +12,9 @@ for src in "$@"; do
   for at in 0 9 18; do
     awk "BEGIN{exit !($at + 6 <= $dur)}" || continue
     n=$((n + 1)); f=$(printf 'r%02d' "$n")
-    ffmpeg -loglevel error -y -ss "$at" -t 6 -i "$src" -an -vf "scale=360:640,fps=30" \
-      -c:v libx264 -preset slow -crf 30 -pix_fmt yuv420p -movflags +faststart "$out/$f.mp4"
-    ffmpeg -loglevel error -y -ss 0.5 -i "$out/$f.mp4" -frames:v 1 -q:v 5 "$out/$f.jpg"
+    ffmpeg -loglevel error -y -ss "$at" -t 6 -i "$src" -an -vf "scale=540:960:flags=lanczos,fps=30" \
+      -c:v libx264 -preset veryslow -crf 23 -tune film -pix_fmt yuv420p -movflags +faststart "$out/$f.mp4"
+    ffmpeg -loglevel error -y -ss 0.5 -i "$out/$f.mp4" -frames:v 1 -q:v 3 "$out/$f.jpg"
     items+=("{\"src\":\"/reel/$f.mp4\",\"poster\":\"/reel/$f.jpg\"}")
   done
 done
