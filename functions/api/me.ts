@@ -3,7 +3,12 @@ import { billingReady, cookie, fail, hint, json, publicUser, readJson, session, 
 
 export const onRequestGet: Fn = async ({ request, env }) => {
   const s = await session(env, request);
-  if (!s) return fail(401, 'signed_out', 'Sign in to continue.');
+  if (!s) {
+    // An expired session: drop the hint too, so public pages stop asking.
+    const res = fail(401, 'signed_out', 'Sign in to continue.');
+    res.headers.append('set-cookie', hint(false));
+    return res;
+  }
   // Refresh the sign-in hint so public pages greet people who signed in before it existed.
   return json({ user: publicUser(s.user), billingReady: billingReady(env) }, 200, { 'set-cookie': hint(true) });
 };

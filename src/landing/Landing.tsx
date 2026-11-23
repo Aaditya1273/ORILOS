@@ -296,7 +296,7 @@ function Story() {
 function Wall({ reel }: { reel: Reel }) {
   const cols = [0, 1, 2, 3, 4].map((i) => reel.clips.filter((_, n) => n % 5 === i));
   return (
-    <section className="lp-wall" data-p aria-labelledby="wall-h">
+    <section id="wall" className="lp-wall" data-p aria-labelledby="wall-h">
       <div className="lp-wall-head rv">
         <h2 id="wall-h" className="lp-h2">
           Real clips.

@@ -2,7 +2,6 @@
 import {
   ArrowRight,
   Bot,
-  CalendarClock,
   Captions,
   Check,
   Copy,
@@ -14,7 +13,6 @@ import {
   Radio,
   Search,
   Sparkles,
-  Wand2,
   type LucideIcon,
 } from 'lucide-react';
 import { useMemo, useState, type MouseEvent, type ReactNode } from 'react';
@@ -76,7 +74,7 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 function PromptOut({ text }: { text: string }) {
   return (
     <div className="ws-out">
-      <p className="ac-stat-label">Paste this into Claude Code or Codex</p>
+      <p className="ws-label-sm">Paste this into Claude Code or Codex</p>
       <CopyLine text={text} label="Copy prompt" />
     </div>
   );
@@ -91,13 +89,13 @@ const link = (go: Go, to: string) => (e: MouseEvent) => {
 
 /* ── The clip builder ──────────────────────────────────────── */
 
-function Builder({ go, compact = false, initialUrl = '' }: { go: Go; compact?: boolean; initialUrl?: string }) {
+function Builder({ initialUrl = '' }: { initialUrl?: string }) {
   const [c, setC] = useState<ClipChoices>({ ...DEFAULT_CHOICES, url: initialUrl });
   const set = (patch: Partial<ClipChoices>) => setC({ ...c, ...patch });
   const prompt = clipPrompt(c);
 
   return (
-    <div className={`ws-builder${compact ? ' compact' : ''}`}>
+    <div className="ws-builder">
       <label className="ws-url">
         <Link2 size={20} aria-hidden="true" />
         <input value={c.url} onChange={(e) => set({ url: e.target.value })} placeholder="Paste a YouTube, Twitch, Kick or podcast link…" aria-label="Video link" inputMode="url" />
@@ -106,8 +104,6 @@ function Builder({ go, compact = false, initialUrl = '' }: { go: Go; compact?: b
         <Field label="Clips">
           <Seg label="Number of clips" value={c.clips} onChange={(clips) => set({ clips })} options={[3, 5, 8, 12].map((n) => [n, String(n)] as [number, string])} />
         </Field>
-        {!compact && (
-          <>
             <Field label="Caption style">
               <select value={c.style} onChange={(e) => set({ style: e.target.value })}>
                 <option value="">Let my AI choose</option>
@@ -145,35 +141,85 @@ function Builder({ go, compact = false, initialUrl = '' }: { go: Go; compact?: b
                 <Chips label="Platforms" value={c.platforms} options={PLATFORMS} onChange={(platforms) => set({ platforms })} />
               </Field>
             )}
-          </>
-        )}
       </div>
       <PromptOut text={prompt} />
-      {compact && (
-        <a className="ac-link" href="/account/create" onClick={link(go, `/account/create${c.url ? `?url=${encodeURIComponent(c.url)}` : ''}`)}>
-          Styles, language, posting and more <ArrowRight size={14} />
-        </a>
-      )}
     </div>
   );
 }
 
 /* ── Home ──────────────────────────────────────────────────── */
 
-const TOOLS: { icon: LucideIcon; title: string; text: string; to: string }[] = [
-  { icon: Wand2, title: 'Clip builder', text: 'Every option, one prompt', to: '/account/create' },
-  { icon: Captions, title: 'Caption styles', text: `${STYLES.length} looks, any script`, to: '/account/styles' },
-  { icon: Mic, title: 'Voices', text: `Spoken hooks in ${VOICE_LANGUAGES.length} languages`, to: '/account/voices' },
-  { icon: Radio, title: 'Autopilot', text: 'Clip every stream, live', to: '/account/autopilot' },
-  { icon: CalendarClock, title: 'Schedule', text: 'Best hours on 9 platforms', to: '/account/schedule' },
-  { icon: Palette, title: 'Brand kits', text: 'Logo, colours, font', to: '/docs/brand-kits' },
-  { icon: Flame, title: 'Hot moments', text: 'What viewers loved', to: '/docs/hot-moments' },
-  { icon: Bot, title: 'AI actors', text: 'UGC ads with Tavus', to: '/docs/ugc' },
+const FEATURES: { title: string; text: string; to: string; img: string; badge?: string }[] = [
+  { title: 'Clip builder', text: 'Every option in one prompt: style, edit, language, posting.', to: '/account/create', img: '/reel/r03.jpg' },
+  { title: 'Caption styles', text: `${STYLES.length} looks, rendered for real. Pick one in a click.`, to: '/account/styles', img: '/styles/orilos.webp' },
+  { title: 'Autopilot', text: 'Watch a Twitch, Kick or YouTube channel. Clip every stream.', to: '/account/autopilot', img: '/reel/r01.jpg', badge: 'Live' },
+  { title: 'Schedule', text: 'Best hours on 9 platforms, on a calendar you can drag.', to: '/account/schedule', img: '/studio-calendar.webp' },
 ];
+
+const MORE: { icon: LucideIcon; title: string; text: string; to: string }[] = [
+  { icon: Mic, title: 'Voices', text: `Spoken hooks in ${VOICE_LANGUAGES.length} languages`, to: '/account/voices' },
+  { icon: Palette, title: 'Brand kits', text: 'Logo, colours and font on every clip', to: '/docs/brand-kits' },
+  { icon: Flame, title: 'Hot moments', text: 'What viewers replayed and chatted about', to: '/docs/hot-moments' },
+  { icon: Bot, title: 'AI actors', text: 'UGC ads presented by a Tavus actor', to: '/docs/ugc' },
+];
+
+const REEL = ['r02', 'r07', 'r04', 'r11', 'r06', 'r09', 'r13', 'r08', 'r15'];
 
 function greeting() {
   const h = new Date().getHours();
-  return h < 5 ? 'Late night session' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  return h < 5 ? 'Up late' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+}
+
+function Section({ title, sub, action, children }: { title: string; sub?: string; action?: ReactNode; children: ReactNode }) {
+  return (
+    <section className="ws-section">
+      <header>
+        <div>
+          <h2>{title}</h2>
+          {sub && <p>{sub}</p>}
+        </div>
+        {action}
+      </header>
+      {children}
+    </section>
+  );
+}
+
+/** The one thing to do on Home: paste a link, copy the prompt. */
+function HeroBuilder({ go }: { go: Go }) {
+  const [url, setUrl] = useState('');
+  const [clips, setClips] = useState(5);
+  const [copied, copy] = useCopy();
+  const prompt = clipPrompt({ ...DEFAULT_CHOICES, url, clips });
+  return (
+    <div className="ws-hb">
+      <form
+        className="ws-hb-row"
+        onSubmit={(e) => {
+          e.preventDefault();
+          copy(prompt);
+        }}
+      >
+        <label className="ws-url">
+          <Link2 size={20} aria-hidden="true" />
+          <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="Paste a YouTube, Twitch, Kick or podcast link" aria-label="Video link" inputMode="url" />
+        </label>
+        <button className="ac-btn pink ws-hb-cta">{copied === prompt ? <Check size={18} /> : <Copy size={18} />} {copied === prompt ? 'Copied' : 'Copy prompt'}</button>
+      </form>
+      <div className="ws-hb-meta">
+        <span className="ws-hb-clips">
+          <span className="ws-label-sm">Clips</span>
+          <Seg label="Number of clips" value={clips} onChange={setClips} options={[3, 5, 8, 12].map((n) => [n, String(n)] as [number, string])} />
+        </span>
+        <a className="ac-link" href="/account/create" onClick={link(go, `/account/create${url ? `?url=${encodeURIComponent(url)}` : ''}`)}>
+          Style, language, posting <ArrowRight size={14} />
+        </a>
+      </div>
+      <p className="ws-hb-prompt" title={prompt}>
+        <span>Your prompt</span> {prompt}
+      </p>
+    </div>
+  );
 }
 
 export function Home({ me, go }: Ctx) {
@@ -190,26 +236,79 @@ export function Home({ me, go }: Ctx) {
   return (
     <>
       <section className="ws-hero">
-        <p className="ac-eyebrow">
-          {greeting()}, {first || 'creator'}
-        </p>
-        <h1>
-          What are we <span className="pink">clipping</span> today?
-        </h1>
-        <Builder compact go={go} />
+        <div className="ws-hero-copy">
+          <p className="ws-hello">
+            {greeting()}, {first || 'creator'}
+          </p>
+          <h1>
+            What are we <span className="pink">clipping</span> today?
+          </h1>
+          <p className="ws-hero-sub">Paste a link. Your AI finds the moments people loved, ORILOS turns them into shorts.</p>
+          <HeroBuilder go={go} />
+        </div>
+        <div className="ws-hero-art" aria-hidden="true">
+          <img className="ws-phone back l" src="/reel/r05.jpg" alt="" />
+          <img className="ws-phone back r" src="/reel/r12.jpg" alt="" />
+          <video className="ws-phone front" src="/reel/r03.mp4" poster="/reel/r03.jpg" autoPlay muted loop playsInline preload="metadata" />
+          <span className="ws-float a">
+            <Flame size={14} /> Chat spike at 41:07
+          </span>
+          <span className="ws-float b">
+            <Sparkles size={14} /> Score 92
+          </span>
+        </div>
       </section>
 
-      <div className="ws-tiles">
-        {TOOLS.map((t) => (
-          <a key={t.title} className="ws-tile" href={t.to} onClick={link(go, t.to)}>
-            <span className="ws-tile-icon">
-              <t.icon size={22} aria-hidden="true" />
-            </span>
-            <b>{t.title}</b>
-            <small>{t.text}</small>
-          </a>
-        ))}
-      </div>
+      <Section title="Start here" sub="The four things creators use every day.">
+        <div className="ws-features">
+          {FEATURES.map((f) => (
+            <a key={f.title} className="ws-feature" href={f.to} onClick={link(go, f.to)}>
+              <span className="ws-feature-img">
+                <img src={f.img} alt="" loading="lazy" />
+                {f.badge && <i>{f.badge}</i>}
+              </span>
+              <b>{f.title}</b>
+              <small>{f.text}</small>
+            </a>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="More tools">
+        <div className="ws-more">
+          {MORE.map((t) => (
+            <a key={t.title} href={t.to} onClick={link(go, t.to)}>
+              <span className="ws-more-icon">
+                <t.icon size={20} aria-hidden="true" />
+              </span>
+              <span>
+                <b>{t.title}</b>
+                <small>{t.text}</small>
+              </span>
+              <ArrowRight size={16} aria-hidden="true" />
+            </a>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Made with ORILOS" sub="Real clips, cut and captioned by ORILOS. Hover to play." action={<a className="ac-link" href="/#wall">See more <ArrowRight size={14} /></a>}>
+        <div className="ws-reel">
+          {REEL.map((r) => (
+            <video
+              key={r}
+              src={`/reel/${r}.mp4`}
+              poster={`/reel/${r}.jpg`}
+              muted
+              loop
+              playsInline
+              preload="none"
+              onMouseEnter={(e) => void e.currentTarget.play().catch(() => {})}
+              onMouseLeave={(e) => e.currentTarget.pause()}
+            />
+          ))}
+        </div>
+        <p className="ac-fine">Footage: Veloren gameplay by Nookrium (CC BY) and "Winning Conversations" by Heritage of Faith CC (CC BY).</p>
+      </Section>
 
       <div className="ws-row">
         {!setupDone ? (
@@ -245,13 +344,13 @@ export function Home({ me, go }: Ctx) {
             </ul>
           </Card>
         )}
-        <Card title="Your plan">
+        <Card title="Your plan" className={me.plan === 'free' ? 'ws-plan-card' : ''}>
           <p className="ac-stat">{planOf(me.plan).name}</p>
           <p className="ac-mute">
-            {me.plan === 'free' ? 'Unlimited clips on your computer. Pro adds every style, brand kits, scheduling and Autopilot.' : 'Every ORILOS feature is on. Thank you for backing us.'}
+            {me.plan === 'free' ? 'Unlimited clips on your computer. Pro adds all 67 styles, brand kits, best-time scheduling and Autopilot.' : 'Every ORILOS feature is on. Thank you for backing us.'}
           </p>
           <a className={`ac-btn${me.plan === 'free' ? ' pink' : ''}`} href="/account/billing" onClick={link(go, '/account/billing')}>
-            {me.plan === 'free' ? 'See Pro' : 'Manage plan'}
+            {me.plan === 'free' ? 'Upgrade to Pro' : 'Manage plan'}
           </a>
         </Card>
         <Card title="What's new">
@@ -265,7 +364,7 @@ export function Home({ me, go }: Ctx) {
             <li>
               <Captions size={16} aria-hidden="true" />
               <span>
-                <b>{STYLES.length} caption styles</b> in every script, plus the new ORILOS pink looks.
+                <b>{STYLES.length} caption styles</b> with real previews.
               </span>
             </li>
             <li>
@@ -286,14 +385,14 @@ export function Home({ me, go }: Ctx) {
 
 /* ── Create ────────────────────────────────────────────────── */
 
-export function Create({ go }: Ctx) {
+export function Create(_: Ctx) {
   const url = new URLSearchParams(location.search).get('url') ?? '';
   return (
     <>
       <Head title="Clip builder" sub="Pick what you want. ORILOS turns it into one sentence for your AI." />
       <div className="ws-create">
         <Card>
-          <Builder go={go} initialUrl={url} />
+          <Builder initialUrl={url} />
         </Card>
         <Card title="What happens next" className="ws-how">
           <ol>
@@ -355,7 +454,6 @@ export function Styles(_: Ctx) {
   return (
     <>
       <Head title="Caption styles" sub={`${STYLES.length} looks. Click one to copy the prompt that uses it.`} />
-      <img className="ws-sheet" src="/caption-styles.webp" alt="A sheet of ORILOS caption styles" loading="lazy" />
       <div className="ws-toolbar">
         <label className="ws-search">
           <Search size={16} aria-hidden="true" />
@@ -369,14 +467,18 @@ export function Styles(_: Ctx) {
           const text = `Use the ${s.name} caption style.`;
           return (
             <button key={s.name} className="ws-style" onClick={() => copy(text)}>
-              <code>{s.name}</code>
-              <span>{s.look}</span>
-              <small>Best for: {s.best_for}</small>
+              <img src={`/styles/${s.name}.webp`} alt={`The ${s.name} caption style`} loading="lazy" width="540" height="300" />
+              <span className="ws-style-body">
+                <code>{s.name}</code>
+                <span>{s.look}</span>
+                <small>Best for {s.best_for.charAt(0).toLowerCase() + s.best_for.slice(1)}</small>
+              </span>
               <i aria-hidden="true">{copied === text ? <Check size={16} /> : <Copy size={16} />}</i>
             </button>
           );
         })}
       </div>
+      <p className="ac-fine">Previews rendered by ORILOS. Footage: "Winning Conversations" by Heritage of Faith CC (CC BY).</p>
     </>
   );
 }

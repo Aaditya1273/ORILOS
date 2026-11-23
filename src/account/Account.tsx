@@ -3,8 +3,6 @@ import {
   BookOpen,
   CalendarClock,
   Captions,
-  ChevronsLeft,
-  ChevronsRight,
   CreditCard,
   Home as HomeIcon,
   KeyRound,
@@ -12,6 +10,8 @@ import {
   LogOut,
   Menu,
   Mic,
+  PanelLeftClose,
+  PanelLeftOpen,
   Radio,
   Settings as Cog,
   Sparkles,
@@ -100,11 +100,9 @@ export function Account() {
   const [path, go] = usePath();
   const [state, setState] = useState<{ me: Me; billingReady: boolean } | null>(null);
   const [down, setDown] = useState('');
-  const [initialSlim, saveSlim] = remembered('orilos.rail.slim', false);
+  const [initialSlim, saveSlim] = remembered('orilos.rail.slim', true);
   const [slim, setSlim] = useState(initialSlim);
   const [drawer, setDrawer] = useState(false);
-  const [initialPromo, savePromo] = remembered('orilos.promo.hidden', false);
-  const [promoHidden, setPromoHidden] = useState(initialPromo);
 
   useEffect(() => {
     getMe().then(
@@ -124,15 +122,32 @@ export function Account() {
   const tab = TABS.find((t) => t.path === path) ?? TABS[0];
   const group = GROUPS.find((g) => g.tabs.includes(tab))!;
   const free = state.me.plan === 'free';
+  const toggle = () => {
+    setSlim(!slim);
+    saveSlim(!slim);
+  };
 
   return (
     <div className={`ac ws${slim ? ' slim' : ''}${drawer ? ' drawer' : ''}`}>
       <aside className="ws-rail" aria-label="Workspace">
         <div className="ws-rail-top">
-          <a className="ac-brand" href="/" aria-label="ORILOS home">
-            <img src="/mascot/neutral.png" alt="" width="26" height="26" />
-            <span className="ws-hide">ORILOS</span>
-          </a>
+          {slim ? (
+            // Collapsed: the logo turns into an expand button on hover.
+            <button className="ws-logo-btn" onClick={toggle} aria-label="Expand sidebar">
+              <img src="/mascot/neutral.png" alt="" width="28" height="28" />
+              <PanelLeftOpen size={20} aria-hidden="true" />
+            </button>
+          ) : (
+            <a className="ac-brand" href="/" aria-label="ORILOS home">
+              <img src="/mascot/neutral.png" alt="" width="28" height="28" />
+              ORILOS
+            </a>
+          )}
+          {!slim && (
+            <button className="ws-icon-btn ws-only-desktop" onClick={toggle} aria-label="Collapse sidebar" data-tip="Collapse">
+              <PanelLeftClose size={18} />
+            </button>
+          )}
           <button className="ws-icon-btn ws-only-mobile" onClick={() => setDrawer(false)} aria-label="Close menu">
             <X size={18} />
           </button>
@@ -140,45 +155,35 @@ export function Account() {
         <nav>
           {GROUPS.map((g) => (
             <div key={g.label || 'main'} className="ws-group">
-              {g.label && <p className="ws-group-label ws-hide">{g.label}</p>}
+              {g.label && <p className="ws-group-label">{g.label}</p>}
               {g.tabs.map((t) => (
                 <a
                   key={t.path}
                   href={t.path}
-                  title={slim ? t.label : undefined}
+                  data-tip={t.label}
+                  aria-label={slim ? t.label : undefined}
                   aria-current={t === tab ? 'page' : undefined}
                   onClick={(e) => {
                     e.preventDefault();
                     go(t.path);
                   }}
                 >
-                  <t.icon size={18} aria-hidden="true" />
-                  <span className="ws-hide">{t.label}</span>
+                  <t.icon size={20} aria-hidden="true" />
+                  <span className="ws-label">{t.label}</span>
                 </a>
               ))}
             </div>
           ))}
         </nav>
         <div className="ws-rail-foot">
-          <a href="/docs" title={slim ? 'Docs' : undefined}>
-            <BookOpen size={18} aria-hidden="true" />
-            <span className="ws-hide">Docs</span>
+          <a href="/docs" data-tip="Docs" aria-label={slim ? 'Docs' : undefined}>
+            <BookOpen size={20} aria-hidden="true" />
+            <span className="ws-label">Docs</span>
           </a>
-          <a href="https://github.com/Aaditya1273/ORILOS/issues" target="_blank" rel="noreferrer" title={slim ? 'Support' : undefined}>
-            <LifeBuoy size={18} aria-hidden="true" />
-            <span className="ws-hide">Support</span>
+          <a href="https://github.com/Aaditya1273/ORILOS/issues" target="_blank" rel="noreferrer" data-tip="Support" aria-label={slim ? 'Support' : undefined}>
+            <LifeBuoy size={20} aria-hidden="true" />
+            <span className="ws-label">Support</span>
           </a>
-          <button
-            className="ws-collapse"
-            onClick={() => {
-              setSlim(!slim);
-              saveSlim(!slim);
-            }}
-            aria-label={slim ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            {slim ? <ChevronsRight size={18} /> : <ChevronsLeft size={18} />}
-            <span className="ws-hide">Collapse</span>
-          </button>
         </div>
       </aside>
       <div className="ws-scrim" onClick={() => setDrawer(false)} aria-hidden="true" />
@@ -189,22 +194,13 @@ export function Account() {
             <Menu size={20} />
           </button>
           <nav className="ws-crumbs" aria-label="Breadcrumb">
-            <a
-              href="/account"
-              onClick={(e) => {
-                e.preventDefault();
-                go('/account');
-              }}
-            >
-              Workspace
-            </a>
             {group.label && <span>{group.label}</span>}
-            {tab.path !== '/account' && <b>{tab.label}</b>}
+            <b>{tab.label}</b>
           </nav>
           <div className="ws-top-right">
             {free && (
               <a
-                className="ac-btn pink small ws-upgrade"
+                className="ws-upgrade"
                 href="/account/billing"
                 onClick={(e) => {
                   e.preventDefault();
@@ -217,34 +213,6 @@ export function Account() {
             <UserMenu me={state.me} go={go} />
           </div>
         </header>
-
-        {free && !promoHidden && tab.path === '/account' && (
-          <div className="ws-promo">
-            <p>
-              <b>Clip like a studio.</b> Pro unlocks all 67 caption styles, brand kits, best-time scheduling and Autopilot.
-            </p>
-            <a
-              className="ac-btn small"
-              href="/account/billing"
-              onClick={(e) => {
-                e.preventDefault();
-                go('/account/billing');
-              }}
-            >
-              See Pro
-            </a>
-            <button
-              className="ws-icon-btn"
-              aria-label="Hide"
-              onClick={() => {
-                setPromoHidden(true);
-                savePromo(true);
-              }}
-            >
-              <X size={16} />
-            </button>
-          </div>
-        )}
 
         <main className="ws-main" id="main">
           <tab.page key={tab.path} {...ctx} />
