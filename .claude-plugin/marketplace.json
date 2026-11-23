@@ -1,0 +1,12 @@
+{
+  "name": "orilos",
+  "description": "ORILOS: AI clipping and posting for Claude Code.",
+  "owner": { "name": "Aaditya1273" },
+  "plugins": [
+    {
+      "name": "orilos",
+      "source": "./plugin",
+      "description": "Clip any video or live stream into viral shorts and post everywhere. No AI key needed."
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "orilos",
+  "version": "0.1.0",
+  "description": "Clip any video or live stream into viral shorts (captions, hooks, 9:16 framing) and post to TikTok, Reels, Shorts, X, LinkedIn and more. Runs on your computer; no AI key needed.",
+  "author": { "name": "Aaditya1273" },
+  "homepage": "https://orilos.pages.dev",
+  "license": "MIT",
+  "keywords": ["clips", "shorts", "reels", "tiktok", "youtube", "video", "mcp"]
+}

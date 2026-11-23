@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "orilos": {
+      "command": "uvx",
+      "args": ["orilos-mcp"],
+      "timeout": 600000
+    }
+  }
+}
