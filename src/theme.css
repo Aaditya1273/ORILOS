@@ -1,0 +1,26 @@
+/* ORILOS brand: black and white, with the pinks of a Vice City night. Sharp edges.
+   Shared by the landing page, the docs and (mirrored by hand) the local Studio. */
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/inter-tight';
+@import '@fontsource-variable/jetbrains-mono';
+
+:root {
+  --o-black: #000;
+  --o-ink: #0a0a0a;
+  --o-ink-2: #141414;
+  --o-line: #262626;
+  --o-mute: #8c8c8c;
+  --o-soft: #cfcfcf;
+  --o-white: #fff;
+
+  --o-pink: #ff2e93;      /* hot pink: the one accent */
+  --o-pink-soft: #ff7ab8;
+  --o-blush: #ffd1e6;
+  --o-sunset: linear-gradient(100deg, #ff2e93 0%, #ff5fa2 45%, #ff9a7a 100%);
+
+  --o-display: 'Inter Tight Variable', 'Inter Tight', system-ui, sans-serif;
+  --o-body: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --o-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+
+  --o-radius: 0;          /* sharp cuts */
+}
