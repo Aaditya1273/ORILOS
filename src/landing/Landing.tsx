@@ -207,7 +207,7 @@ function Hero({ reel }: { reel: Reel }) {
 }
 
 const LOGOS = [
-  ["yt", "YouTube"], ["shorts", "YouTube Shorts"], ["tiktok", "TikTok"], ["insta", "Instagram Reels"], ["x", "X"],
+  ["shorts", "YouTube Shorts"], ["tiktok", "TikTok"], ["insta", "Instagram Reels"], ["x", "X"],
   ["linkedin", "LinkedIn"], ["fb", "Facebook"], ["threads", "Threads"], ["pintrest", "Pinterest"], ["bluesky", "Bluesky"],
 ] as const;
 
