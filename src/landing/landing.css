@@ -142,6 +142,19 @@ html:has(.lp) body {
 .lp-foot nav a:hover {
   color: #fff;
 }
+.lp-nav-cta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.lp-signin {
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+}
+.lp-signin:hover {
+  color: var(--o-pink);
+}
 .lp-btn {
   display: inline-flex;
   align-items: center;

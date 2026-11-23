@@ -143,10 +143,14 @@ function Nav() {
         <a href="#autopilot">Autopilot</a>
         <a href="#ai">Your AI</a>
         <a href="/docs">Docs</a>
+        <a href="/pricing">Pricing</a>
       </nav>
-      <a className="lp-btn" href="#install">
-        Install free <ArrowRight size={16} aria-hidden="true" />
-      </a>
+      <div className="lp-nav-cta">
+        <a className="lp-signin" href="/signin">Sign in</a>
+        <a className="lp-btn" href="#install">
+          Install free <ArrowRight size={16} aria-hidden="true" />
+        </a>
+      </div>
     </header>
   );
 }
@@ -518,6 +522,8 @@ function Footer({ reel }: { reel: Reel }) {
         <nav aria-label="Footer">
           <a href="/docs">Docs</a>
           <a href="/docs/quickstart">Quickstart</a>
+          <a href="/pricing">Pricing</a>
+          <a href="/account">Account</a>
           <a href="/docs">GitHub</a>
           <a href="/app">Web app</a>
         </nav>

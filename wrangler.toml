@@ -1,0 +1,20 @@
+# Cloudflare Pages: the static site in dist/ plus the account API in functions/.
+# Secrets (never in this file): GOOGLE_CLIENT_SECRET, LS_API_KEY, LS_WEBHOOK_SECRET.
+#   npx wrangler pages secret put <NAME> --project-name orilos
+name = "orilos"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-06-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "orilos"
+database_id = "0be19fa1-221b-42c7-b3d2-632db1a8eff8"
+migrations_dir = "migrations"
+
+[vars]
+GOOGLE_CLIENT_ID = ""
+LS_STORE_ID = ""
+LS_VARIANT_PRO_MONTHLY = ""
+LS_VARIANT_PRO_YEARLY = ""
+LS_VARIANT_TEAM_MONTHLY = ""
+LS_VARIANT_TEAM_YEARLY = ""
