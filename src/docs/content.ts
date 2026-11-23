@@ -104,7 +104,7 @@ export const PAGES: Page[] = [
     blocks: [
       { p: 'ORILOS turns long videos and live streams into finished vertical shorts (9:16, word-by-word captions, a hook on screen, framed on the faces) and posts them to TikTok, Instagram, YouTube Shorts, X, LinkedIn, Facebook, Threads, Pinterest and Bluesky.' },
       { p: 'It is an **MCP server**: it plugs into Claude Code, Codex, Claude Desktop, Cursor, Windsurf or any MCP client. **Your own AI is the creative brain**: it reads the transcript, picks the moments and writes the hooks and captions. ORILOS does the heavy work on your computer: download, transcribe, find hot moments, frame, caption, render, post.' },
-      { callout: 'No AI key, no account, no watermark, no minutes to buy. ORILOS has no server: your clips and keys stay on your computer.', kind: 'tip' },
+      { callout: 'No AI key, no account needed, no watermark, no minutes to buy. Clipping runs on your computer: your videos, clips and keys stay there.', kind: 'tip' },
       { h2: 'The core flow' },
       { flow: [
         { label: 'Paste a link', note: 'In Claude Code or Codex: “clip this”. Any of 1,800+ sites, or a file.' },

@@ -1,4 +1,4 @@
-/* ORILOS brand: black and white, with the pinks of a Vice City night. Sharp edges.
+/* ORILOS brand: black and white, with the pinks of a Vice City night. Smooth, rounded edges.
    Shared by the landing page, the docs and (mirrored by hand) the local Studio. */
 @import '@fontsource-variable/inter';
 @import '@fontsource-variable/inter-tight';
@@ -22,5 +22,14 @@
   --o-body: 'Inter Variable', 'Inter', system-ui, sans-serif;
   --o-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
 
-  --o-radius: 0;          /* sharp cuts */
+  /* Curves: small controls, cards, big panels, pills. */
+  --o-r-xs: 6px;
+  --o-r-sm: 10px;
+  --o-r: 14px;
+  --o-r-lg: 20px;
+  --o-r-xl: 28px;
+  --o-pill: 999px;
+  --o-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --o-glow: 0 12px 40px -12px rgba(255, 46, 147, 0.55);
+  --o-lift: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 24px 60px -28px rgba(0, 0, 0, 0.9);
 }

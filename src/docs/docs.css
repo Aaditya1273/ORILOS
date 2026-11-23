@@ -1,4 +1,4 @@
-/* ORILOS Docs: black and white, one hot-pink accent, sharp edges. Tokens live in src/theme.css. */
+/* ORILOS Docs: black and white, one hot-pink accent, rounded edges. Tokens live in src/theme.css. */
 
 :root:has(.dx) { background: var(--o-black); color-scheme: dark; }
 
@@ -315,4 +315,78 @@ h3.dx-h { margin: 36px 0 0 !important; font-size: 20px; line-height: 1.3; font-w
 }
 @media (prefers-reduced-motion: reduce) {
   .dx-side { transition: none; }
+}
+
+/* ── Curves ── */
+.dx kbd,
+.dx-body :not(pre) > code,
+.dx-body td code,
+.dx-body li code,
+.dx-sub code {
+  border-radius: var(--o-r-xs);
+}
+.dx-pill,
+.dx-tabs button {
+  border-radius: var(--o-pill);
+}
+.dx-find,
+.dx-search-field,
+.dx-callout,
+.dx-card,
+.dx-icon,
+.dx-toc-bar > button {
+  border-radius: var(--o-r);
+}
+.dx-row a,
+.dx-sub a,
+.dx-copy,
+.dx-hits li,
+.dx-hint button,
+.dx-twisty {
+  border-radius: var(--o-r-sm);
+}
+.dx-code,
+.dx-table,
+.dx-img img {
+  border-radius: var(--o-r-lg);
+  overflow: hidden;
+}
+.dx-row a[aria-current='page'],
+.dx-sub a[aria-current='page'] {
+  border-left-color: transparent;
+  background: rgba(255, 46, 147, 0.12);
+}
+.dx-callout {
+  padding: 14px 16px;
+  border: 1px solid var(--o-line);
+  background: var(--o-ink);
+}
+.dx-callout.tip,
+.dx-callout.warn {
+  border-color: rgba(255, 46, 147, 0.4);
+  background: rgba(255, 46, 147, 0.06);
+}
+.dx-table {
+  border: 1px solid var(--o-line);
+}
+.dx-table th:first-child,
+.dx-table td:first-child {
+  padding-left: 16px;
+}
+.dx-table tr:last-child td {
+  border-bottom: 0;
+}
+.dx-search {
+  border-radius: var(--o-r-xl);
+  overflow: hidden;
+  box-shadow: var(--o-lift);
+}
+.dx-cards {
+  gap: 12px;
+}
+.dx-card {
+  border: 1px solid var(--o-line);
+}
+.dx-flow li::before {
+  border-radius: 50%;
 }

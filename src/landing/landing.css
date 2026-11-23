@@ -1,4 +1,4 @@
-/* ORILOS landing. Black and white, one pink. Sharp edges, huge type, few words. Tokens: src/theme.css. */
+/* ORILOS landing. Black and white, one pink. Rounded edges, huge type, few words. Tokens: src/theme.css. */
 html:has(.lp),
 html:has(.lp) body {
   background: #000;
@@ -16,7 +16,6 @@ html:has(.lp) body {
 .lp *::before,
 .lp *::after {
   box-sizing: border-box;
-  border-radius: 0;
 }
 .lp a {
   color: inherit;
@@ -1273,4 +1272,88 @@ html:has(.lp) body {
   .lp-auto-bg {
     translate: none !important;
   }
+}
+
+/* ── Curves ── */
+.lp-btn,
+.lp-welcome,
+.lp-ask button,
+.lp-tabs button,
+.lp-names span,
+.lp-cmd {
+  border-radius: var(--o-pill);
+}
+.lp-btn,
+.lp-ask button,
+.lp-tabs button,
+.lp-cmd,
+.lp-platforms li {
+  transition: background 0.25s var(--o-ease), color 0.25s var(--o-ease), border-color 0.25s var(--o-ease), transform 0.25s var(--o-ease), box-shadow 0.25s var(--o-ease);
+}
+.lp-btn:hover,
+.lp-ask button:hover {
+  box-shadow: var(--o-glow);
+}
+.lp-welcome img,
+.lp-welcome i {
+  border-radius: 50%;
+}
+.lp-ask {
+  border-radius: var(--o-pill);
+  padding: 5px;
+  overflow: hidden;
+}
+.lp-ask:focus-within {
+  box-shadow: var(--o-glow);
+}
+.lp-platforms li {
+  border-radius: var(--o-r);
+}
+.lp-platforms li:hover {
+  transform: translateY(-2px);
+}
+.lp-hero-wall video,
+.lp-hero-wall img,
+.lp-wcol video,
+.lp-wcol img {
+  border-radius: var(--o-r-lg);
+}
+.lp-frame > video,
+.lp-short {
+  border-radius: var(--o-r-lg);
+}
+.lp-short video,
+.lp-term-clips img {
+  border-radius: var(--o-r-sm);
+}
+.lp-time i,
+.lp-heat i {
+  border-radius: var(--o-pill);
+}
+.lp-dest li::before {
+  border-radius: 50%;
+}
+.lp-kara span.on {
+  border-radius: var(--o-r-xs);
+}
+.lp-names {
+  gap: 8px;
+  border: 0;
+}
+.lp-names span {
+  border: 1px solid var(--line);
+}
+.lp-term {
+  border-radius: var(--o-r-lg);
+  overflow: hidden;
+  box-shadow: var(--o-lift);
+}
+.lp-tabs {
+  gap: 8px;
+}
+.lp-tabs button {
+  margin-right: 0;
+}
+.lp-nums div {
+  border-radius: var(--o-r-lg);
 }
