@@ -37,6 +37,8 @@ export interface User {
 export const SESSION_COOKIE = '__Host-orilos';
 export const OAUTH_COOKIE = '__Host-orilos-oauth';
 export const SESSION_DAYS = 30;
+/** A readable "you are signed in" hint, so public pages only ask /api/me when it can succeed. Not a credential. */
+export const hint = (on: boolean) => `orilos_in=${on ? 1 : ''}; Path=/; Secure; SameSite=Lax; Max-Age=${on ? SESSION_DAYS * 86400 : 0}`;
 
 export const now = () => Math.floor(Date.now() / 1000);
 

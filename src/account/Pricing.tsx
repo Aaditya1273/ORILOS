@@ -1,6 +1,6 @@
 import { Check } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { getMe, type Me } from './api';
+import { maybeMe, type Me } from './api';
 import { TopBar } from './Chrome';
 import { PLANS, type Interval, type Plan } from './plans';
 import './account.css';
@@ -28,7 +28,7 @@ export function Pricing() {
   const [interval, setInterval] = useState<Interval>('yearly');
   const [me, setMe] = useState<Me | null>(null);
   useEffect(() => {
-    getMe().then((r) => setMe(r.user), () => {});
+    void maybeMe().then(setMe);
   }, []);
 
   return (

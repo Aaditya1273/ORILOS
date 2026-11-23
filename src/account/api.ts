@@ -47,6 +47,9 @@ export async function api<T>(path: string, init: { method?: string; body?: unkno
 }
 
 export const getMe = () => api<{ user: Me; billingReady: boolean }>('/me');
+/** The signed-in user for public pages, or null. Only calls the API when the sign-in hint cookie is there. */
+export const maybeMe = (): Promise<Me | null> =>
+  /(?:^|; )orilos_in=1/.test(document.cookie) ? getMe().then((r) => r.user, () => null) : Promise.resolve(null);
 export const signInUrl = (next: string) => `/api/auth/google?next=${encodeURIComponent(next)}`;
 
 export const when = (epoch: number | null, tz?: string) =>

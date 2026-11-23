@@ -1,4 +1,4 @@
-import { cookie, newSession, now, OAUTH_COOKIE, randomToken, readCookie, safeNext, type Fn } from '../../_lib';
+import { cookie, hint, newSession, now, OAUTH_COOKIE, randomToken, readCookie, safeNext, type Fn } from '../../_lib';
 
 interface GoogleUser {
   sub: string;
@@ -46,5 +46,6 @@ export const onRequestGet: Fn = async ({ request, env }) => {
   const headers = new Headers({ location: `${url.origin}${safeNext(decodeURIComponent(next ?? ''))}` });
   headers.append('set-cookie', await newSession(env, request, user!.id));
   headers.append('set-cookie', cookie(OAUTH_COOKIE, '', 0));
+  headers.append('set-cookie', hint(true));
   return new Response(null, { status: 302, headers });
 };

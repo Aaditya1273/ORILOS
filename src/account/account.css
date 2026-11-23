@@ -488,76 +488,7 @@ html:has(.ac) body {
   text-decoration: none;
 }
 
-/* ── Account shell ── */
-.ac-app {
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
-}
-.ac-side {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  padding: 24px 16px;
-  border-right: 1px solid var(--o-line);
-}
-.ac-side > .ac-brand {
-  padding: 0 8px;
-}
-.ac-side nav {
-  display: grid;
-  gap: 2px;
-}
-.ac-side nav a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  color: var(--o-soft);
-  text-decoration: none;
-  font-weight: 500;
-  border-left: 2px solid transparent;
-}
-.ac-side nav a:hover {
-  color: #fff;
-  background: var(--o-ink);
-}
-.ac-side nav a[aria-current='page'] {
-  color: #fff;
-  background: var(--o-ink-2);
-  border-left-color: var(--o-pink);
-}
-.ac-side nav a[aria-current='page'] svg {
-  color: var(--o-pink);
-}
-.ac-side-foot {
-  margin-top: auto;
-  display: grid;
-  gap: 14px;
-  padding: 16px 8px 0;
-  border-top: 1px solid var(--o-line);
-}
-.ac-who {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  min-width: 0;
-}
-.ac-who span {
-  display: grid;
-  min-width: 0;
-}
-.ac-who b,
-.ac-who small {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.ac-who small {
-  color: var(--o-mute);
-}
+/* ── Account pages ── */
 .ac-avatar {
   flex: none;
   display: inline-grid;
@@ -566,14 +497,6 @@ html:has(.ac) body {
   background: var(--o-pink);
   color: #000;
   font-weight: 800;
-}
-.ac-main {
-  width: 100%;
-  max-width: 1080px;
-  padding: 40px var(--pad) 80px;
-  display: grid;
-  gap: 20px;
-  align-content: start;
 }
 .ac-head {
   display: flex;
@@ -939,49 +862,6 @@ html:has(.ac) body {
   .ac-plan:last-child {
     border-bottom: 0;
   }
-  .ac-app {
-    grid-template-columns: 1fr;
-  }
-  .ac-side {
-    position: sticky;
-    z-index: 10;
-    height: auto;
-    flex-direction: row;
-    align-items: center;
-    gap: 16px;
-    padding: 12px 16px;
-    border-right: 0;
-    border-bottom: 1px solid var(--o-line);
-    background: #000;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .ac-side > .ac-brand {
-    padding: 0;
-  }
-  .ac-side nav {
-    display: flex;
-  }
-  .ac-side nav a {
-    padding: 8px 10px;
-    border-left: 0;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-  }
-  .ac-side nav a[aria-current='page'] {
-    border-bottom-color: var(--o-pink);
-  }
-  .ac-side-foot {
-    margin: 0 0 0 auto;
-    padding: 0;
-    border: 0;
-  }
-  .ac-who {
-    display: none;
-  }
-  .ac-side-foot .ac-link {
-    white-space: nowrap;
-  }
   .ac-grid2,
   .ac-upgrades {
     grid-template-columns: 1fr;
@@ -996,9 +876,6 @@ html:has(.ac) body {
   }
   .ac-stats {
     grid-template-columns: 1fr;
-  }
-  .ac-side nav a svg {
-    display: none;
   }
   .ac-head {
     flex-direction: column;

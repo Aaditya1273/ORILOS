@@ -33,17 +33,17 @@ export const STYLES: { name: string; look: string; best_for: string }[] = [
  },
  {
   "name": "orilos",
-  "look": "ORILOS Lit Glass: frosted dark bar, lime word, violet glow",
-  "best_for": "Anything. Our signature look"
+  "look": "ORILOS: solid black bar, white words, hot-pink spoken word",
+  "best_for": "Anything, our signature"
  },
  {
   "name": "orilos-neon",
-  "look": "Violet neon glow, lime spoken word",
+  "look": "ORILOS neon: white words in a hot-pink glow, the spoken word burns brightest",
   "best_for": "Night streams, gaming"
  },
  {
   "name": "orilos-glass",
-  "look": "Glass card, white words, violet spoken word box",
+  "look": "ORILOS paper: solid white bar, black words, hot-pink spoken word",
   "best_for": "Founders, product, brand"
  },
  {

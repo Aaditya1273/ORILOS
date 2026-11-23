@@ -1,10 +1,11 @@
 import { LIVE_STATUSES } from '../../src/account/plans';
-import { billingReady, cookie, fail, json, publicUser, readJson, session, SESSION_COOKIE, type Fn } from '../_lib';
+import { billingReady, cookie, fail, hint, json, publicUser, readJson, session, SESSION_COOKIE, type Fn } from '../_lib';
 
 export const onRequestGet: Fn = async ({ request, env }) => {
   const s = await session(env, request);
   if (!s) return fail(401, 'signed_out', 'Sign in to continue.');
-  return json({ user: publicUser(s.user), billingReady: billingReady(env) });
+  // Refresh the sign-in hint so public pages greet people who signed in before it existed.
+  return json({ user: publicUser(s.user), billingReady: billingReady(env) }, 200, { 'set-cookie': hint(true) });
 };
 
 export const onRequestPatch: Fn = async ({ request, env }) => {
@@ -50,5 +51,7 @@ export const onRequestDelete: Fn = async ({ request, env }) => {
     env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(id),
     env.DB.prepare('DELETE FROM users WHERE id = ?').bind(id),
   ]);
-  return json({ ok: true }, 200, { 'set-cookie': cookie(SESSION_COOKIE, '', 0) });
+  const headers = new Headers({ 'set-cookie': cookie(SESSION_COOKIE, '', 0) });
+  headers.append('set-cookie', hint(false));
+  return json({ ok: true }, 200, headers);
 };

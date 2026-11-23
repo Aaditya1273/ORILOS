@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { getMe, signInUrl } from './api';
+import { maybeMe, signInUrl } from './api';
 import { Brand, GoogleMark } from './Chrome';
 import { safeNext } from './next';
 import './account.css';
@@ -21,7 +21,7 @@ export function SignIn() {
 
   // Already signed in: go straight on.
   useEffect(() => {
-    getMe().then(() => location.replace(next), () => {});
+    void maybeMe().then((me) => me && location.replace(next));
   }, [next]);
 
   return (

@@ -1,5 +1,6 @@
 import { ArrowRight, Check, Copy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { maybeMe, type Me } from "../account/api";
 import "./landing.css";
 
 // Everything the page claims is true of ORILOS today. No em dashes, no emoji in visible copy.
@@ -132,6 +133,11 @@ function Clip({ c, play = true }: { c: { src: string; poster: string }; play?: b
 // ── Sections ─────────────────────────────────────────────────────────────
 
 function Nav() {
+  const [me, setMe] = useState<Me | null>(null);
+  useEffect(() => {
+    void maybeMe().then(setMe);
+  }, []);
+  const first = me ? (me.name || me.email).split(" ")[0] : "";
   return (
     <header className="lp-nav">
       <a className="lp-logo" href="/" aria-label="ORILOS home">
@@ -146,10 +152,24 @@ function Nav() {
         <a href="/pricing">Pricing</a>
       </nav>
       <div className="lp-nav-cta">
-        <a className="lp-signin" href="/signin">Sign in</a>
-        <a className="lp-btn" href="#install">
-          Install free <ArrowRight size={16} aria-hidden="true" />
-        </a>
+        {me ? (
+          <>
+            <a className="lp-welcome" href="/account">
+              {me.avatar ? <img src={me.avatar} alt="" width="26" height="26" referrerPolicy="no-referrer" /> : <i aria-hidden="true">{first.charAt(0).toUpperCase()}</i>}
+              <span>Welcome back, {first}</span>
+            </a>
+            <a className="lp-btn" href="/account">
+              Dashboard <ArrowRight size={16} aria-hidden="true" />
+            </a>
+          </>
+        ) : (
+          <>
+            <a className="lp-signin" href="/signin">Sign in</a>
+            <a className="lp-btn" href="#install">
+              Install free <ArrowRight size={16} aria-hidden="true" />
+            </a>
+          </>
+        )}
       </div>
     </header>
   );
