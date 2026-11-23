@@ -129,14 +129,6 @@ npm run build     # production build in dist/
 
 The site is deployed to Cloudflare Pages (`orilos.pages.dev`). Security and cache headers live in `public/_headers`.
 
-## Credits
-
-- Demo clips made by ORILOS from **Veloren gameplay by Nookrium** and **"Winning Conversations" by Heritage of Faith CC**, both licensed CC BY.
-- Miami night photo by **Sunira Moses** on Unsplash.
-- Fonts: Inter, Inter Tight and JetBrains Mono (SIL Open Font License).
-- Platform names and logos are trademarks of their owners and are used only to show where ORILOS can post.
-- ORILOS is not affiliated with, endorsed or sponsored by Rockstar Games or Take-Two Interactive. Grand Theft Auto and GTA VI are their trademarks.
-
 ## Licence
 
 Copyright (c) 2026 ORILOS. All rights reserved.
