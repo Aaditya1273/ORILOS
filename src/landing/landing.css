@@ -338,32 +338,43 @@ html:has(.lp) body {
 .lp-hero .lp-fine {
   margin-top: 16px;
 }
-.lp-scroll {
-  position: absolute;
-  bottom: 28px;
-  left: 50%;
-  width: 1px;
-  height: 56px;
-  background: rgb(255 255 255 / 0.25);
+.lp-platforms {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
 }
-.lp-scroll span {
-  position: absolute;
-  left: -2px;
-  width: 5px;
-  height: 14px;
-  background: var(--o-pink);
-  animation: lp-drop 1.8s cubic-bezier(0.6, 0, 0.4, 1) infinite;
+.lp-platforms li {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  background: rgb(10 10 10 / 0.72);
+  transition: border-color 0.2s, transform 0.2s;
 }
-@keyframes lp-drop {
-  from {
-    top: 0;
-    opacity: 1;
-  }
-  to {
-    top: 100%;
-    opacity: 0;
-  }
+.lp-platforms li:hover {
+  border-color: var(--o-pink);
+  transform: translateY(-2px);
 }
+.lp-platforms img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+@media (max-width: 480px) {
+  .lp-platforms { gap: 4px; flex-wrap: nowrap; }
+  .lp-platforms li { width: 30px; height: 30px; flex: 0 0 auto; }
+  .lp-platforms img { width: 18px; height: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-platforms li { transition: none; }
+  .lp-platforms li:hover { transform: none; }
+}
+
 
 /* ── Story: pinned, scroll-driven. --p is 0..1 across the sticky run (set by Landing.tsx). ── */
 .lp-story {

@@ -193,14 +193,23 @@ function Hero({ reel }: { reel: Reel }) {
             {done === "hero" ? "Copied. Paste it into your AI" : "Copy prompt for my AI"}
           </button>
         </form>
+        <ul className="lp-platforms" aria-label="Posts to">
+          {LOGOS.map(([file, name]) => (
+            <li key={file}>
+              <img src={`/platforms/${file}.webp`} alt={name} title={name} width={28} height={28} loading="eager" decoding="async" />
+            </li>
+          ))}
+        </ul>
         <p className="lp-fine">No upload. No account. No AI key. Windows, macOS, Linux.</p>
       </div>
-      <a className="lp-scroll" href="#story" aria-label="Scroll to how it works">
-        <span />
-      </a>
     </section>
   );
 }
+
+const LOGOS = [
+  ["yt", "YouTube"], ["shorts", "YouTube Shorts"], ["tiktok", "TikTok"], ["insta", "Instagram Reels"], ["x", "X"],
+  ["linkedin", "LinkedIn"], ["fb", "Facebook"], ["threads", "Threads"], ["pintrest", "Pinterest"], ["bluesky", "Bluesky"],
+] as const;
 
 const STEPS = ["One long stream.", "Find what people loved.", "Cut to 9:16.", "Caption every word.", "Punch in.", "Post everywhere."];
 const STEP_AT = [0, 0.12, 0.32, 0.52, 0.66, 0.8];
