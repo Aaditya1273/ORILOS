@@ -12,7 +12,7 @@ database_id = "0be19fa1-221b-42c7-b3d2-632db1a8eff8"
 migrations_dir = "migrations"
 
 [vars]
-GOOGLE_CLIENT_ID = ""
+GOOGLE_CLIENT_ID = "260389162338-mjr340f21kjno8ch1b6tqe17oulq62ld.apps.googleusercontent.com"
 LS_STORE_ID = ""
 LS_VARIANT_PRO_MONTHLY = ""
 LS_VARIANT_PRO_YEARLY = ""

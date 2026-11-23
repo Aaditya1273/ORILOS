@@ -8,3 +8,6 @@ dist
 
 # wrangler local state
 .wrangler
+.dev.vars
+.env
+.env.*
