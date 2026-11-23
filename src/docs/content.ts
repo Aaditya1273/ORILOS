@@ -1,5 +1,4 @@
-// Every docs page, as data. Written from orilos-mcp's source (README, server.py, install.py,
-// schedule.py, autopilot.py, brand.py, ugc.py, vault.py, connect.py). Keep it true to the code.
+// Every docs page, as data. Keep it true to the product.
 
 import { STYLES, VOICE_LANGUAGES } from './data';
 import type { Block, Page } from './lib';

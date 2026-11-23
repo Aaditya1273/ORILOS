@@ -1,74 +1,142 @@
-# ORILOS Web
+<p align="center">
+  <img src=".github/assets/mascot.png" width="88" alt="ORILOS">
+</p>
 
-ORILOS in the browser: an AI worker that researches what's happening in your space, writes posts in your voice for **X, LinkedIn, Instagram, Threads, Facebook, Reddit, Bluesky, Mastodon and Pinterest**, and gets them ready to publish. You approve. You post.
+<h1 align="center">ORILOS</h1>
 
-Live: **https://orilos.pages.dev**
+<p align="center"><b>Long in. Short out.</b></p>
 
-**Design ("Lit Glass")**, the same language as the Android app:
-- a softly lit, grain-textured ground behind every page, with frosted glass for whatever you read or act on;
-- light large headlines, small uppercase section labels and pill buttons;
-- in dark and warm-paper light themes, with every text colour ≥ 4.5:1;
-- ORILOS's face is a small cloud (from VERBAL, same author, MIT) that shows what it's doing: at rest it blinks, it works with its eyes on you, it's bright-eyed when your posts are ready, and it's taken aback (with a "!") when something fails;
-- light theme uses the ink cloud; *reduce motion* stops the blink and the animation.
+<p align="center">
+  Paste a link into Claude Code or Codex. Get captioned, hooked, vertical shorts, ready to post.<br>
+  Free. No AI key. On your own computer.
+</p>
 
-React 19 + TypeScript + Vite. No backend: everything lives in your browser, and the only service it talks to is Google Gemini, using your own free key.
+<p align="center">
+  <a href="https://orilos.pages.dev"><img alt="Website" src="https://img.shields.io/badge/website-orilos.pages.dev-ff2e93?style=flat-square&labelColor=000"></a>
+  <a href="https://orilos.pages.dev/docs"><img alt="Docs" src="https://img.shields.io/badge/docs-read-ffffff?style=flat-square&labelColor=000"></a>
+  <a href="https://orilos.pages.dev/docs/connect"><img alt="Works with Claude Code and Codex" src="https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20Codex-ffffff?style=flat-square&labelColor=000"></a>
+  <img alt="Windows, macOS, Linux" src="https://img.shields.io/badge/runs%20on-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-ffffff?style=flat-square&labelColor=000">
+</p>
+
+<p align="center">
+  <img src=".github/assets/platforms/shorts.png" width="32" alt="YouTube Shorts" title="YouTube Shorts">&nbsp;
+  <img src=".github/assets/platforms/tiktok.png" width="32" alt="TikTok" title="TikTok">&nbsp;
+  <img src=".github/assets/platforms/insta.png" width="32" alt="Instagram Reels" title="Instagram Reels">&nbsp;
+  <img src=".github/assets/platforms/x.png" width="32" alt="X" title="X">&nbsp;
+  <img src=".github/assets/platforms/linkedin.png" width="32" alt="LinkedIn" title="LinkedIn">&nbsp;
+  <img src=".github/assets/platforms/fb.png" width="32" alt="Facebook" title="Facebook">&nbsp;
+  <img src=".github/assets/platforms/threads.png" width="32" alt="Threads" title="Threads">&nbsp;
+  <img src=".github/assets/platforms/pintrest.png" width="32" alt="Pinterest" title="Pinterest">&nbsp;
+  <img src=".github/assets/platforms/bluesky.png" width="32" alt="Bluesky" title="Bluesky">
+</p>
+
+<p align="center">
+  <img src=".github/assets/clips.jpg" width="100%" alt="Shorts made by ORILOS from a gaming stream and a podcast">
+</p>
+
+<p align="center"><sub>Real ORILOS output. Sources: Veloren gameplay by Nookrium (CC BY) and "Winning Conversations" by Heritage of Faith CC (CC BY).</sub></p>
+
+---
 
 ## What it does
 
+You tell the AI you already use: *"clip this"* and a link. ORILOS does the rest.
+
 | | |
 |---|---|
-| **Brand Brain** | Gemini reads your website (URL context) and searches the web, then builds a profile: tone, audience, pillars, key messages, words to avoid. You can edit it. |
-| **Research** | Every run uses Google Search grounding for this week's news and data, with sources kept for each fact. It also reads your **watched pages** (blog, changelog, a competitor's pricing page) for anything new. |
-| **Writing** | One idea per run, then a native version for each platform. X Free is 280 characters; X Premium allows long posts with the hook in the first 280. X guidance follows the signals in X's published ranking code. |
-| **Quality gate** | Checks length, hashtags, banned phrases, generic AI phrasing, and numbers that aren't in the evidence. An editor pass scores each post, and weak posts are revised once. |
-| **Learning** | Your edits before approving are shown to the next run (can be switched off). |
-| **Images** | “Create in ChatGPT” opens chatgpt.com with the image brief already filled in. Gemini and Copilot get the brief copied. You paste, drop or upload the result, and big images are downscaled. With a paid Gemini key it can also create images itself (opt-in). |
-| **Hand-off** | **X**, **LinkedIn**, **Threads** and **Bluesky** open their composers with the text filled in, and the image is put on the clipboard so you only paste it. **Reddit** opens a text post with the title and body filled in; you pick the community. **Instagram**, **Facebook** and **Pinterest** get the post copied and the image saved, then open. **Mastodon** has no single server, so the post is copied for you to paste on yours. On phones, the system share sheet attaches the image. |
-| **Truthful states** | Needs approval → Waiting for you to post → **Posted only when you confirm**. ORILOS can't see your accounts and never claims it posted. |
-| **Schedule** | Daily, Mon–Fri, weekly or once. It runs while a tab is open; a Web Lock makes sure only one tab runs it. A run missed in the last 12 hours catches up when you return. Notifications are optional. |
-| **Data** | Export or import a backup (it never contains your key or images), or delete everything. |
+| **Finds the moments people loved** | YouTube's most replayed graph, chat explosions, the clips viewers made, the loudest seconds, and every word said. |
+| **Frames for 9:16** | Follows the speaker, stacks a facecam over gameplay, or fits a wide shot. Shot by shot. |
+| **Captions every word** | 67 caption looks. Any script: Hindi, Arabic, Chinese, Japanese, Korean, Thai, Russian and more. |
+| **Edits like a pro** | Jump cuts, punch-in zooms, lit keywords, sound hits, a progress bar, all inside each app's safe zone. |
+| **Speaks** | A spoken hook in 53 languages, with free voices that run offline. |
+| **Your brand** | Your logo, colours and font on every clip. Never an ORILOS watermark. |
+| **Posts everywhere** | TikTok, Reels, Shorts, X, LinkedIn, Facebook, Threads, Pinterest and Bluesky. Now, or at each platform's best hours. |
+| **Autopilot** | Watches your Twitch, Kick or YouTube channel and clips every stream while you sleep. |
+| **Studio** | A private page on your computer to watch, approve, edit and drag clips onto a calendar. |
 
-## What it deliberately does not do
-- It never logs in to your accounts, presses “Post”, or drives another site's page.
-- It never hides what it does from you or from the platforms.
-- It never automates ChatGPT, Gemini or Claude; their terms forbid that. It opens them for you.
+## How it works
 
-The composer pre-fill uses the platforms' own public share links.
+```mermaid
+flowchart LR
+    A["You: clip this + a link"] --> B["Your AI<br/>Claude Code or Codex"]
+    B --> C["ORILOS on your computer<br/>download, transcribe, hot moments"]
+    C --> B
+    B -- "picks the moments<br/>writes hooks and captions" --> D["ORILOS renders<br/>9:16, captions, edits, brand"]
+    D --> E["Studio<br/>approve and schedule"]
+    E --> F["9 platforms"]
+```
 
-## Security
-- The Gemini key is encrypted with AES-GCM under a **non-extractable** WebCrypto key stored in IndexedDB.
-  - It is sent only to `generativelanguage.googleapis.com`, in a header (never in a URL).
-  - It is never part of an export.
-  - Key-shaped strings are redacted from error messages.
-- The production build ships a strict **Content-Security-Policy**: no third-party scripts, and connections only to Gemini. It also sets `no-referrer`.
-- Web pages and search results are fenced and treated as **untrusted data** in every prompt, to resist prompt injection.
+Your AI is the creative director. ORILOS is its editing suite. Your videos, clips and keys never leave your computer.
 
-## Run it
+<table>
+  <tr>
+    <td width="34%" valign="top"><img src=".github/assets/short.jpg" alt="A finished ORILOS short: facecam over gameplay, captions and hook"></td>
+    <td valign="top">
+      <img src=".github/assets/caption-styles.jpg" alt="The 67 ORILOS caption styles">
+      <br><br>
+      <img src=".github/assets/studio-calendar.jpg" alt="The ORILOS Studio posting calendar">
+    </td>
+  </tr>
+</table>
+
+## Get started
+
+ORILOS plugs into Claude Code, Codex, Claude Desktop, Cursor, Windsurf and VS Code.
+
+```bash
+uvx orilos-mcp install
+```
+
+Then, in your AI app:
+
+```text
+clip this https://www.youtube.com/watch?v=...
+```
+
+In Claude Code you can also add it as a plugin from this repository:
+
+```text
+/plugin marketplace add Aaditya1273/ORILOS
+/plugin install orilos@orilos
+```
+
+> **Release status:** the ORILOS package is being published. Until it is live, the install command above will not resolve. Watch this repository for the release.
+
+Full guide: **[orilos.pages.dev/docs](https://orilos.pages.dev/docs)**
+
+## This repository
+
+The public home of ORILOS: the website, the docs and the Claude Code plugin.
+
+| Path | What |
+|---|---|
+| `src/landing/` | The landing page at `/` |
+| `src/docs/` | The docs at `/docs`: content, search and the tools reference |
+| `src/ui/`, `src/lib/` | The ORILOS web app at `/app` (BYOK, runs in your browser) |
+| `src/theme.css` | Brand tokens: black, white and hot pink, Inter Tight, Inter and JetBrains Mono |
+| `public/` | Clips, images, logos and the mascot |
+| `.claude-plugin/`, `plugin/` | The Claude Code plugin marketplace |
+| `scripts/reel.sh` | Rebuilds the landing clip reel from finished clips |
+
+Built with React 19, TypeScript and Vite. No backend.
 
 ```bash
 npm install
-npm run dev         # http://localhost:5173
-npm run build       # → dist/ (static; host anywhere)
-npm test            # unit tests
+npm run dev       # local site at http://localhost:5173
+npm test          # unit tests
+npm run build     # production build in dist/
 ```
 
-A live end-to-end test runs the whole pipeline against real Gemini. It is skipped without a key, and the key is never printed:
+The site is deployed to Cloudflare Pages (`orilos.pages.dev`). Security and cache headers live in `public/_headers`.
 
-```bash
-GEMINI_API_KEY=… npx vitest run test/live.test.ts
-```
+## Credits
 
-Get a free key at https://aistudio.google.com/apikey.
+- Demo clips made by ORILOS from **Veloren gameplay by Nookrium** and **"Winning Conversations" by Heritage of Faith CC**, both licensed CC BY.
+- Miami night photo by **Sunira Moses** on Unsplash.
+- Fonts: Inter, Inter Tight and JetBrains Mono (SIL Open Font License).
+- Platform names and logos are trademarks of their owners and are used only to show where ORILOS can post.
+- ORILOS is not affiliated with, endorsed or sponsored by Rockstar Games or Take-Two Interactive. Grand Theft Auto and GTA VI are their trademarks.
 
-## Free-tier notes
-- Text generation works on the free Gemini tier.
-- **Search grounding has its own small free quota.** When it runs out, ORILOS still reads your website and watched pages, and says so in Activity.
-- Gemini **image** models need a billing-enabled key.
+## Licence
 
-## Layout
-```
-src/lib/   gemini (client, fallback, grounding) · agent (pipeline + prompts) · platforms · quality
-           handoff · images · schedule · worker (runs, scheduler) · store/db/vault (storage)
-src/ui/    Home · Content · PostView · Schedule · Activity · Settings · Onboarding · Intro · kit
-test/      rules.test.ts (unit) · live.test.ts (real Gemini, opt-in)
-```
+Copyright (c) 2026 ORILOS. All rights reserved.
