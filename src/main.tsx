@@ -20,15 +20,20 @@ if (path === '/app' || path.startsWith('/app/')) {
   // Ask the browser not to evict ORILOS's data under storage pressure.
   void navigator.storage?.persist?.();
   mount(<App />);
-} else if (path === '/signin') {
-  const { SignIn } = await import('./account/SignIn');
-  mount(<SignIn />);
-} else if (path === '/pricing') {
-  const { Pricing } = await import('./account/Pricing');
-  mount(<Pricing />);
-} else if (path === '/account' || path.startsWith('/account/')) {
-  const { Account } = await import('./account/Account');
-  mount(<Account />);
+} else if (path === '/signin' || path === '/pricing' || path === '/account' || path.startsWith('/account/')) {
+  // Sign-in, pricing and the workspace share a light/dark theme, applied before they draw.
+  const { savedTheme } = await import('./account/ui');
+  document.documentElement.dataset.theme = savedTheme();
+  if (path === '/signin') {
+    const { SignIn } = await import('./account/SignIn');
+    mount(<SignIn />);
+  } else if (path === '/pricing') {
+    const { Pricing } = await import('./account/Pricing');
+    mount(<Pricing />);
+  } else {
+    const { Account } = await import('./account/Account');
+    mount(<Account />);
+  }
 } else if (path === '/docs' || path.startsWith('/docs/')) {
   const { Docs } = await import('./docs/Docs');
   mount(<Docs />);

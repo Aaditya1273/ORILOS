@@ -601,7 +601,7 @@ export function Schedule({ me }: Ctx) {
           ))}
         </div>
         <p className="ac-fine">
-          Local time on the computer running ORILOS (your profile says {me.timezone}). The pink line is now. At most 2 posts a day per platform, never two within 3 hours.
+          Local time on the computer running ORILOS (your profile says {me.timezone}). The outlined column is the current hour. At most 2 posts a day per platform, never two within 3 hours.
         </p>
       </Card>
       <div className="ws-row two">

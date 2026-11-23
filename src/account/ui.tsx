@@ -5,6 +5,27 @@ import { api, type LicenceKey, type Me } from './api';
 import { plan as planOf } from './plans';
 
 export type Go = (to: string) => void;
+
+export type Theme = 'dark' | 'light';
+const THEME_KEY = 'orilos.theme';
+
+/** The saved theme for the account pages; dark unless the person picked light. */
+export function savedTheme(): Theme {
+  try {
+    return localStorage.getItem(THEME_KEY) === 'light' ? 'light' : 'dark';
+  } catch {
+    return 'dark';
+  }
+}
+
+export function applyTheme(theme: Theme) {
+  document.documentElement.dataset.theme = theme;
+  try {
+    localStorage.setItem(THEME_KEY, theme);
+  } catch {
+    /* private mode: the choice lasts this visit */
+  }
+}
 export interface Ctx {
   me: Me;
   setMe: (m: Me) => void;
