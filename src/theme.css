@@ -33,3 +33,11 @@
   --o-glow: 0 12px 40px -12px rgba(255, 46, 147, 0.55);
   --o-lift: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 24px 60px -28px rgba(0, 0, 0, 0.9);
 }
+
+/* No visible scrollbars anywhere: pages and panels still scroll with the wheel, trackpad, touch and keyboard. */
+* {
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
