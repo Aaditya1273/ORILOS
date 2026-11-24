@@ -593,7 +593,7 @@ export function Schedule({ me }: Ctx) {
   const now = new Date().getHours();
   return (
     <>
-      <Head title="Schedule" sub="Each platform's best hours, starred. ORILOS spreads your clips across them." />
+      <Head title="Schedule" sub="Each platform's best hours, highlighted. ORILOS spreads your clips across them." />
       <Card title="Best hours to post">
         <div className="ws-heat" role="table" aria-label="Best posting hours by platform">
           <div role="row" className="ws-heat-row head">
@@ -622,6 +622,11 @@ export function Schedule({ me }: Ctx) {
       </Card>
       <div className="ws-row two">
         <Card title="Plan your week">
+          <ol className="ws-plan-steps">
+            <li>Approve the clips you like in the Studio.</li>
+            <li>Paste the line below into your AI. ORILOS spreads them over the week at each platform's best hours.</li>
+            <li>Check them on the Studio calendar and drag any post to a new time.</li>
+          </ol>
           <PromptOut text="Plan my week: schedule my approved clips to TikTok, Instagram and YouTube at their best hours." />
         </Card>
         <Card title="See it on a calendar">

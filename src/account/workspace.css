@@ -2,17 +2,21 @@
    Neutrals carry the page, pink marks the one main action and where you are. Builds on account.css. */
 .ws {
   --rail: 248px;
-  --surface: #0c0c0e;
-  --surface-2: #141417;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-2: rgba(255, 255, 255, 0.14);
-  --text: #f4f4f5;
-  --text-2: #a1a1aa;
-  --text-3: #71717a;
-  --rail-bg: #070708;
-  --top-bg: rgba(0, 0, 0, 0.8);
-  --active-bg: rgba(255, 255, 255, 0.08);
-  --field-bg: #000;
+  /* Dark: near-black page, cards one step lighter (lighter = raised), visible borders,
+     a 3-step text ladder that all passes 4.5:1, and one calmer pink. */
+  --page: #09090b;
+  --surface: #131316;
+  --surface-2: #1d1d21;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-2: rgba(255, 255, 255, 0.18);
+  --text: #ededef;
+  --text-2: #b4b4bc;
+  --text-3: #8b8b95;
+  --rail-bg: #0d0d10;
+  --top-bg: rgba(9, 9, 11, 0.82);
+  --active-bg: rgba(255, 255, 255, 0.09);
+  --field-bg: #0b0b0d;
+  --accent-cell: color-mix(in srgb, var(--o-pink) 84%, #1d1d21);
   display: grid;
   grid-template-columns: var(--rail) minmax(0, 1fr);
   transition: grid-template-columns 0.2s var(--o-ease);
@@ -1192,10 +1196,10 @@
   background: var(--surface-2);
 }
 .ws-heat-row > span.best {
-  background: var(--o-pink);
+  background: var(--accent-cell, var(--o-pink));
 }
 .ws-heat-row > span.now {
-  box-shadow: inset 0 0 0 1px var(--text);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--text) 70%, transparent);
 }
 .ws-heat-row.head span {
   font-size: 12px;
@@ -1604,3 +1608,75 @@
   border-color: color-mix(in srgb, var(--text) 22%, transparent);
 }
 
+
+/* ── Dark-mode visibility (light theme keeps its own look) ── */
+:root:not([data-theme='light']):has(.ws),
+:root:not([data-theme='light']):has(.ws) body {
+  background: var(--page, #09090b);
+}
+:root:not([data-theme='light']) .ws {
+  background: var(--page);
+}
+:root:not([data-theme='light']) .ws ::selection {
+  background: rgba(255, 46, 147, 0.38);
+  color: #fff;
+}
+:root:not([data-theme='light']) .ws .ac-card {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+:root:not([data-theme='light']) .ws .ac-fine,
+:root:not([data-theme='light']) .ws .ac-mute {
+  color: var(--text-2);
+}
+:root:not([data-theme='light']) .ws .ac-stat-label,
+:root:not([data-theme='light']) .ws .ws-heat-row.head span {
+  color: var(--text-3);
+}
+:root:not([data-theme='light']) .ws .ac-copy {
+  background: var(--field-bg);
+  border-color: var(--border-2);
+}
+:root:not([data-theme='light']) .ws .ac-copy code {
+  color: var(--text);
+}
+:root:not([data-theme='light']) .ws .ws-out .ac-copy {
+  border-color: rgba(255, 46, 147, 0.4);
+}
+:root:not([data-theme='light']) .ws .ws-out .ac-copy code {
+  color: #ffc2de;
+}
+/* Two cards side by side keep their own height instead of stretching an empty one */
+.ws-row.two {
+  align-items: start;
+}
+.ws-plan-steps {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 4px;
+  padding: 0;
+  list-style: none;
+  counter-reset: s;
+}
+.ws-plan-steps li {
+  position: relative;
+  padding-left: 32px;
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.5;
+  counter-increment: s;
+}
+.ws-plan-steps li::before {
+  content: counter(s);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--o-pill);
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  color: var(--text);
+  font: 600 12px/1 var(--o-body);
+}
