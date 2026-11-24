@@ -301,7 +301,7 @@ export const TOOLS: Tool[] = [
   },
   {
     "name": "voiceover",
-    "doc": "Real text-to-speech for a hook, narration or a faceless short, in 53 languages (language: \"hi\", \"es\", \"ja\", \"pt-BR\"…).\nFree offline voices by default; ElevenLabs if the user connected it. Returns the audio file path.",
+    "doc": "Real text-to-speech for a hook, narration or a faceless short, in 53 languages (language: \"hi\", \"es\", \"ja\", \"pt-BR\"…).\nFree offline voices by default; ElevenLabs if the user connected it. Returns the audio file path. ORILOS Pro.",
     "params": [
       {
         "name": "text",
