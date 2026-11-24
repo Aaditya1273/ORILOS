@@ -1,6 +1,6 @@
 // Account management: profile, billing, licence keys and settings.
-import { Check, KeyRound } from 'lucide-react';
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { Check, KeyRound, TriangleAlert, X } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { ago, api, device, getMe, when, type LicenceKey, type Me, type Session } from './api';
 import { loadPaddle } from './paddle';
 import { KEY_LIMITS, LIVE_STATUSES, plan as planOf, PLANS, type Interval, type PlanId } from './plans';
@@ -237,25 +237,15 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
         </p>
       )}
       {cancel && (
-        <Card className="ac-confirm" title={cancel.refundable ? 'Cancel and get a full refund?' : cancel.cancelled ? 'Your plan is already cancelled' : `Cancel ${current.name}?`}>
-          <p className="ac-mute">
-            {cancel.refundable
-              ? `You are within 14 days of your first payment${cancel.refundUntil ? ` (until ${when(cancel.refundUntil, me.timezone)})` : ''}, so we refund it in full and your plan switches to Free right away.`
-              : cancel.cancelled
-                ? `${current.name} stays on until ${sub?.endsAt ? when(sub.endsAt, me.timezone) : 'the end of the period you paid for'}, then switches to Free. Refunds are only for the first 14 days after your first payment.`
-                : `${current.name} stays on until ${sub?.renewsAt ? when(sub.renewsAt, me.timezone) : 'the end of the period you paid for'}, then switches to Free. You will not be charged again. Refunds are only for the first 14 days after your first payment.`}
-          </p>
-          <div className="ac-end">
-            <button className="ac-btn ghost" onClick={() => setCancel(null)} disabled={!!busy}>
-              Keep {current.name}
-            </button>
-            {(cancel.refundable || !cancel.cancelled) && (
-              <button className="ac-btn danger" onClick={doCancel} disabled={!!busy}>
-                {busy === 'cancel' ? 'Cancelling…' : cancel.refundable ? 'Cancel and refund' : 'Cancel plan'}
-              </button>
-            )}
-          </div>
-        </Card>
+        <CancelDialog
+          info={cancel}
+          planName={current.name}
+          until={cancel.refundUntil ? when(cancel.refundUntil, me.timezone) : ''}
+          endsOn={sub?.endsAt ? when(sub.endsAt, me.timezone) : sub?.renewsAt ? when(sub.renewsAt, me.timezone) : 'the end of the period you paid for'}
+          busy={busy === 'cancel'}
+          onConfirm={doCancel}
+          onClose={() => setCancel(null)}
+        />
       )}
 
       {!sub || !LIVE_STATUSES.has(sub.status ?? '') ? (
@@ -303,6 +293,94 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
         </Card>
       )}
     </>
+  );
+}
+
+// Cancelling, GitHub style: read what happens, confirm you understood, then type a phrase. Nothing is sent before the last step.
+function CancelDialog(props: {
+  info: { refundable: boolean; cancelled: boolean };
+  planName: string;
+  until: string;
+  endsOn: string;
+  busy: boolean;
+  onConfirm: () => void;
+  onClose: () => void;
+}) {
+  const { info, planName, until, endsOn, busy, onConfirm, onClose } = props;
+  const ref = useRef<HTMLDialogElement>(null);
+  const [step, setStep] = useState<'read' | 'type'>('read');
+  const [typed, setTyped] = useState('');
+  const phrase = info.refundable ? 'cancel and refund' : `cancel ${planName.toLowerCase()}`;
+  const nothingToDo = !info.refundable && info.cancelled;
+  useEffect(() => ref.current?.showModal(), []);
+
+  const effects = info.refundable
+    ? [
+        `Your ${planName} plan ends right away and your account goes back to Free.`,
+        `We refund your first payment in full. Paddle sends it to the card or account you paid with; banks usually show it within 5 to 10 business days.`,
+        `${planName} features stop on your computers the next time ORILOS checks your licence (within a day).`,
+        `This is your one refund: if you subscribe again later, the 14-day refund does not apply.`,
+      ]
+    : [
+        `You will not be charged again.`,
+        `${planName} stays on until ${endsOn}, then your account goes back to Free.`,
+        `There is no refund for the time left: refunds are only possible within 14 days of the first payment.`,
+      ];
+
+  return (
+    <dialog ref={ref} className="ac-dialog" onClose={onClose} aria-labelledby="cancel-title">
+      <header>
+        <h2 id="cancel-title">{nothingToDo ? 'Your plan is already cancelled' : info.refundable ? `Cancel ${planName} and refund` : `Cancel ${planName}`}</h2>
+        <button className="ac-dialog-x" onClick={() => ref.current?.close()} aria-label="Close" disabled={busy}>
+          <X size={18} />
+        </button>
+      </header>
+      <div className="ac-dialog-hero">
+        <b>ORILOS {planName}</b>
+        <span>{info.refundable ? `Full refund available${until ? ` until ${until}` : ''}` : nothingToDo ? `Stays on until ${endsOn}` : 'No refund after 14 days'}</span>
+      </div>
+
+      {nothingToDo ? (
+        <div className="ac-dialog-body">
+          <p className="ac-mute">
+            {planName} stays on until {endsOn}, then switches to Free. Refunds are only possible within 14 days of the first payment.
+          </p>
+          <button className="ac-btn wide" onClick={() => ref.current?.close()}>
+            Close
+          </button>
+        </div>
+      ) : step === 'read' ? (
+        <div className="ac-dialog-body">
+          <p className="ac-dialog-warn">
+            <TriangleAlert size={18} aria-hidden="true" /> Please read this before you continue.
+          </p>
+          <ul className="ac-dialog-list">
+            {effects.map((e) => (
+              <li key={e}>{e}</li>
+            ))}
+          </ul>
+          <button className="ac-btn wide" onClick={() => setStep('type')}>
+            I have read and understand these effects
+          </button>
+        </div>
+      ) : (
+        <form
+          className="ac-dialog-body"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (typed.trim().toLowerCase() === phrase) onConfirm();
+          }}
+        >
+          <label className="ac-dialog-label" htmlFor="cancel-phrase">
+            To confirm, type <b>{phrase}</b> in the box below
+          </label>
+          <input id="cancel-phrase" autoFocus autoComplete="off" spellCheck={false} value={typed} onChange={(e) => setTyped(e.target.value)} disabled={busy} />
+          <button className="ac-btn danger wide" disabled={busy || typed.trim().toLowerCase() !== phrase}>
+            {busy ? (info.refundable ? 'Refunding…' : 'Cancelling…') : info.refundable ? 'Cancel and refund' : `Cancel ${planName}`}
+          </button>
+        </form>
+      )}
+    </dialog>
   );
 }
 

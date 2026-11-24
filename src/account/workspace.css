@@ -1454,3 +1454,110 @@
 .ac-copy button:focus:not(:focus-visible) {
   outline: none;
 }
+
+/* Confirm dialogs (cancel plan): native <dialog>, so Escape and focus work everywhere */
+.ac-dialog {
+  width: min(480px, calc(100vw - 32px));
+  padding: 0;
+  border: 1px solid var(--border-2, var(--border));
+  border-radius: var(--o-r-lg);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+.ac-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+.ac-dialog header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.ac-dialog h2 {
+  margin: 0;
+  font: 600 15px/1.3 var(--o-body);
+}
+.ac-dialog-x {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--o-r-sm);
+  background: none;
+  color: var(--text-2);
+}
+.ac-dialog-x:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.ac-dialog-hero {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  padding: 22px 20px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+.ac-dialog-hero b {
+  font: 700 20px/1.2 var(--o-body);
+}
+.ac-dialog-hero span {
+  color: var(--text-2);
+  font-size: 14px;
+}
+.ac-dialog-body {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+}
+.ac-dialog-warn {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, #f5a524 45%, transparent);
+  border-radius: var(--o-r-sm);
+  background: color-mix(in srgb, #f5a524 12%, transparent);
+  color: var(--text);
+  font-size: 14px;
+}
+.ac-dialog-warn svg {
+  flex: none;
+  color: #f5a524;
+}
+.ac-dialog-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0 0 0 18px;
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.ac-dialog-label {
+  font-size: 14px;
+  color: var(--text);
+}
+.ac-dialog input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-2, var(--border));
+  border-radius: var(--o-r-sm);
+  background: var(--field-bg, var(--surface-2));
+  color: var(--text);
+  font: inherit;
+}
+.ac-dialog input:focus {
+  outline: none;
+  border-color: #ff4d4d;
+  box-shadow: 0 0 0 3px color-mix(in srgb, #ff4d4d 22%, transparent);
+}
+.ac-dialog .ac-btn.danger:disabled {
+  opacity: 0.4;
+}
