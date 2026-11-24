@@ -45,7 +45,7 @@ const GROUPS: { label: string; tabs: Tab[] }[] = [
     label: '',
     tabs: [
       { path: '/account', label: 'Home', icon: HomeIcon, page: Home },
-      { path: '/account/connect', label: 'Connect AI', icon: Plug, page: ClaudeConnect },
+      { path: '/account/plugin', label: 'Plugin', icon: Plug, page: ClaudeConnect },
     ],
   },
   {
@@ -76,8 +76,12 @@ const GROUPS: { label: string; tabs: Tab[] }[] = [
 ];
 const TABS = GROUPS.flatMap((g) => g.tabs);
 
-// Old links: the Connect AI page used to be "Use in Claude" at /account/claude.
-if (location.pathname.replace(/\/+$/, '') === '/account/claude') history.replaceState(null, '', `/account/connect#web`);
+// Old links: the Plugin page was "Use in Claude" (/account/claude), then "Connect AI" (/account/connect).
+{
+  const old = location.pathname.replace(/\/+$/, '');
+  if (old === '/account/claude') history.replaceState(null, '', '/account/plugin#web');
+  else if (old === '/account/connect') history.replaceState(null, '', `/account/plugin${location.hash}`);
+}
 
 function usePath(): [string, Go] {
   const [path, setPath] = useState(location.pathname.replace(/\/+$/, ''));

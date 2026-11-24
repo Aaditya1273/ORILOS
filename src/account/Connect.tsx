@@ -1,4 +1,4 @@
-// Connect AI: ORILOS works inside the AI people already use. Pick the app, get its steps.
+// Plugin: ORILOS works inside the AI people already use. Pick the app, get its steps.
 import { Check, ExternalLink } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { api } from './api';
@@ -70,7 +70,7 @@ export function ClaudeConnect({ go }: Ctx) {
 
   return (
     <>
-      <Head title="Connect AI" sub="ORILOS works inside the AI you already use. Pick yours and follow the steps." />
+      <Head title="Plugin" sub="Add ORILOS to the AI you already use. Pick yours and follow the steps." />
 
       <div className="ws-apps" role="tablist" aria-label="Your AI app">
         {APPS.map((a) => (
