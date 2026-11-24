@@ -69,3 +69,70 @@ export const BEST_HOURS: [platform: string, hours: number[], note?: string][] = 
   ['Pinterest', [14, 20, 21]],
   ['Bluesky', [9, 13, 18]],
 ];
+
+/* ── Scheduling ── */
+
+export interface ScheduleChoices {
+  platforms: string[];
+  clips: 'approved' | 3 | 5;
+  perDay: 1 | 2;
+  start: 'now' | 'tomorrow' | 'monday';
+}
+
+export const DEFAULT_SCHEDULE: ScheduleChoices = { platforms: ['TikTok', 'Instagram', 'YouTube'], clips: 'approved', perDay: 2, start: 'now' };
+
+export function schedulePrompt(c: ScheduleChoices): string {
+  const what = c.clips === 'approved' ? 'my approved clips' : `my ${c.clips} newest clips`;
+  const where = c.platforms.length ? list(c.platforms) : '<pick platforms>';
+  const often = c.perDay === 1 ? '1 post a day' : 'up to 2 posts a day';
+  const start = c.start === 'now' ? 'starting now' : c.start === 'tomorrow' ? 'starting tomorrow' : 'starting next Monday';
+  return `Schedule ${what} to ${where} at each platform's best hours, ${often} per platform, ${start}.`;
+}
+
+/** Wall-clock "now" in a time zone: weekday (0 = Sunday), hour and minute. */
+export interface ZonedNow {
+  weekday: number;
+  hour: number;
+  minute: number;
+}
+
+export function zonedNow(timeZone: string, at = new Date()): ZonedNow {
+  let parts: Intl.DateTimeFormatPart[];
+  try {
+    parts = new Intl.DateTimeFormat('en-US', { timeZone, weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(at);
+  } catch {
+    return { weekday: at.getDay(), hour: at.getHours(), minute: at.getMinutes() };
+  }
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
+  return { weekday: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(get('weekday')), hour: Number(get('hour')) % 24, minute: Number(get('minute')) };
+}
+
+export interface Slot {
+  platform: string;
+  day: number; // days from today
+  hour: number;
+  minutesAway: number;
+}
+
+/** The next posting slots, by the same rules ORILOS schedules with: each platform's best hours,
+ *  at most perDay a day, never two within 3 hours, LinkedIn on weekdays only. */
+export function nextSlots(platforms: string[], now: ZonedNow, perDay: 1 | 2, start: ScheduleChoices['start'], count = 6): Slot[] {
+  const nowMin = now.hour * 60 + now.minute;
+  const first = start === 'now' ? 0 : start === 'tomorrow' ? 1 : ((8 - now.weekday) % 7) || 7;
+  const out: Slot[] = [];
+  for (const [platform, hours] of BEST_HOURS) {
+    if (!platforms.includes(platform)) continue;
+    for (let day = first; day < first + 8; day++) {
+      const weekday = (now.weekday + day) % 7;
+      if (platform === 'LinkedIn' && (weekday === 0 || weekday === 6)) continue;
+      const taken: number[] = [];
+      for (const h of [...hours].sort((a, b) => a - b)) {
+        if (taken.length >= perDay || taken.some((t) => Math.abs(t - h) < 3)) continue;
+        if (day === 0 && h * 60 <= nowMin) continue;
+        taken.push(h);
+        out.push({ platform, day, hour: h, minutesAway: day * 1440 + h * 60 - nowMin });
+      }
+    }
+  }
+  return out.sort((a, b) => a.minutesAway - b.minutesAway).slice(0, count);
+}

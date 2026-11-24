@@ -15,11 +15,11 @@ import {
   Sparkles,
   type LucideIcon,
 } from 'lucide-react';
-import { useMemo, useState, type MouseEvent, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type MouseEvent, type ReactNode } from 'react';
 import { STYLES, VOICE_LANGUAGES } from '../docs/data';
 import { ago } from './api';
 import { FREE_STYLES, plan as planOf } from './plans';
-import { autopilotPrompt, BEST_HOURS, clipPrompt, DEFAULT_CHOICES, EDITS, PLATFORMS, type ClipChoices, type Edit, type WatchChoices } from './prompts';
+import { autopilotPrompt, BEST_HOURS, clipPrompt, DEFAULT_CHOICES, DEFAULT_SCHEDULE, EDITS, nextSlots, PLATFORMS, schedulePrompt, zonedNow, type ClipChoices, type Edit, type ScheduleChoices, type WatchChoices } from './prompts';
 import { Card, CopyLine, Head, useKeys, type Ctx, type Go } from './ui';
 
 /* ── Small pieces ──────────────────────────────────────────── */
@@ -592,52 +592,143 @@ export function Autopilot(_: Ctx) {
 
 /* ── Schedule ──────────────────────────────────────────────── */
 
+const PLATFORM_ICON: Record<string, string> = {
+  TikTok: 'tiktok', Instagram: 'insta', YouTube: 'shorts', X: 'x', LinkedIn: 'linkedin',
+  Facebook: 'fb', Threads: 'threads', Pinterest: 'pintrest', Bluesky: 'bluesky',
+};
+const DAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+function PlatformIcon({ name, size = 20 }: { name: string; size?: number }) {
+  return <img className="ws-pf" src={`/platforms/${PLATFORM_ICON[name]}.webp`} alt="" width={size} height={size} />;
+}
+
+function slotDay(day: number, weekday: number) {
+  return day === 0 ? 'Today' : day === 1 ? 'Tomorrow' : DAY[(weekday + day) % 7];
+}
+
+function away(min: number) {
+  if (min < 60) return `in ${min} min`;
+  if (min < 24 * 60) return `in ${Math.round(min / 60)} h`;
+  return `in ${Math.round(min / 1440)} d`;
+}
+
 export function Schedule({ me }: Ctx) {
-  const now = new Date().getHours();
+  const [c, setC] = useState<ScheduleChoices>(DEFAULT_SCHEDULE);
+  const [, tick] = useState(0);
+  useEffect(() => {
+    const t = window.setInterval(() => tick((n) => n + 1), 60_000);
+    return () => clearInterval(t);
+  }, []);
+  const set = (patch: Partial<ScheduleChoices>) => setC({ ...c, ...patch });
+  const now = zonedNow(me.timezone);
+  const slots = nextSlots(c.platforms, now, c.perDay, c.start);
+  const togglePlatform = (p: string) => set({ platforms: c.platforms.includes(p) ? c.platforms.filter((x) => x !== p) : [...c.platforms, p] });
+
   return (
     <>
-      <Head title="Schedule" sub="Each platform's best hours, highlighted. ORILOS spreads your clips across them." />
-      <Card title="Best hours to post">
+      <Head title="Schedule" sub="Pick where and how often. ORILOS puts every clip in the next best slot, so you never pick a time." />
+
+      <div className="ws-sched-top">
+        <Card title="Plan posts" className="ws-sched-plan">
+          <Field label="Post to">
+            <div className="ws-pfs" role="group" aria-label="Platforms">
+              {BEST_HOURS.map(([p]) => (
+                <button key={p} className={c.platforms.includes(p) ? 'on' : ''} aria-pressed={c.platforms.includes(p)} onClick={() => togglePlatform(p)}>
+                  <PlatformIcon name={p} />
+                  {p}
+                </button>
+              ))}
+            </div>
+          </Field>
+          <Field label="Which clips">
+            <Seg<ScheduleChoices['clips']> label="Which clips" value={c.clips} onChange={(clips) => set({ clips })} options={[['approved', 'All approved'], [3, 'Newest 3'], [5, 'Newest 5']]} />
+          </Field>
+          <Field label="How often">
+            <Seg<1 | 2> label="Posts a day per platform" value={c.perDay} onChange={(perDay) => set({ perDay })} options={[[1, '1 a day'], [2, '2 a day']]} />
+          </Field>
+          <Field label="Start">
+            <Seg<ScheduleChoices['start']> label="Start" value={c.start} onChange={(start) => set({ start })} options={[['now', 'Now'], ['tomorrow', 'Tomorrow'], ['monday', 'Next Monday']]} />
+          </Field>
+          {me.plan === 'free' && (
+            <p className="ac-fine ws-pro-note">
+              Scheduling is part of Pro. On Free you can post right away. <a href="/account/billing">Go Pro</a>
+            </p>
+          )}
+          <PromptOut text={schedulePrompt(c)} />
+        </Card>
+
+        <Card title="Next best slots" className="ws-sched-next">
+          <p className="ac-fine">Where your clips go next, in {me.timezone}. One clip per slot, in order.</p>
+          {slots.length ? (
+            <ol className="ws-slots">
+              {slots.map((s, i) => (
+                <li key={`${s.platform}-${s.day}-${s.hour}`} className={i === 0 ? 'first' : ''}>
+                  <PlatformIcon name={s.platform} size={28} />
+                  <span>
+                    <b>{s.platform}</b>
+                    <small>
+                      {slotDay(s.day, now.weekday)}, {String(s.hour).padStart(2, '0')}:00
+                    </small>
+                  </span>
+                  <em>{i === 0 ? `Next · ${away(s.minutesAway)}` : away(s.minutesAway)}</em>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="ac-mute">Pick at least one platform to see its next slots.</p>
+          )}
+        </Card>
+      </div>
+
+      <Card title="Best hours by platform">
         <div className="ws-heat" role="table" aria-label="Best posting hours by platform">
           <div role="row" className="ws-heat-row head">
             <span role="columnheader" />
             {Array.from({ length: 24 }, (_, h) => (
-              <span role="columnheader" key={h} className={h === now ? 'now' : ''}>
+              <span role="columnheader" key={h} className={h === now.hour ? 'now' : ''}>
                 {h % 3 === 0 ? String(h).padStart(2, '0') : ''}
               </span>
             ))}
           </div>
           {BEST_HOURS.map(([p, hours, note]) => (
-            <div role="row" className="ws-heat-row" key={p}>
+            <div role="row" className={`ws-heat-row${c.platforms.includes(p) ? '' : ' dim'}`} key={p}>
               <span role="rowheader">
-                {p}
+                <span className="ws-heat-name">
+                  <PlatformIcon name={p} size={18} />
+                  {p}
+                </span>
                 {note && <small>{note}</small>}
               </span>
               {Array.from({ length: 24 }, (_, h) => (
-                <span role="cell" key={h} className={`${hours.includes(h) ? 'best' : ''}${h === now ? ' now' : ''}`} title={hours.includes(h) ? `${p}: ${h}:00` : undefined} />
+                <span role="cell" key={h} className={`${hours.includes(h) ? 'best' : ''}${h === now.hour ? ' now' : ''}`} title={hours.includes(h) ? `${p}: ${h}:00` : undefined} />
               ))}
             </div>
           ))}
         </div>
-        <p className="ac-fine">
-          Local time on the computer running ORILOS (your profile says {me.timezone}). The outlined column is the current hour. At most 2 posts a day per platform, never two within 3 hours.
-        </p>
+        <div className="ws-heat-foot">
+          <span className="ws-legend">
+            <i className="best" /> Best hour
+          </span>
+          <span className="ws-legend">
+            <i className="now" /> Now
+          </span>
+          <span className="ac-fine">Hours in {me.timezone}. At most 2 posts a day per platform, never two within 3 hours. Platforms you didn't pick are dimmed.</span>
+        </div>
       </Card>
-      <div className="ws-row two">
-        <Card title="Plan your week">
-          <ol className="ws-plan-steps">
-            <li>Approve the clips you like in the Studio.</li>
-            <li>Paste the line below into your AI. ORILOS spreads them over the week at each platform's best hours.</li>
-            <li>Check them on the Studio calendar and drag any post to a new time.</li>
-          </ol>
-          <PromptOut text="Plan my week: schedule my approved clips to TikTok, Instagram and YouTube at their best hours." />
-        </Card>
-        <Card title="See it on a calendar">
-          <img className="ws-sheet" src="/studio-calendar.webp" alt="The ORILOS Studio calendar" loading="lazy" />
-          <p className="ac-mute">Drag clips onto times in the Studio, a private page on your computer.</p>
+
+      <Card className="ws-studio-row">
+        <img className="ws-sheet" src="/studio-calendar.webp" alt="The ORILOS Studio calendar with a week of scheduled posts" loading="lazy" />
+        <div>
+          <h2>Check it on your calendar</h2>
+          <ul className="ws-plan-steps ws-ticks">
+            <li>See every scheduled post across your platforms, week by week.</li>
+            <li>Drag a post to a new time, or drop a clip onto a slot to schedule it.</li>
+            <li>Approve or skip clips before they go out.</li>
+          </ul>
+          <p className="ac-fine">The Studio is a private page on your computer. Open it with:</p>
           <CopyLine text="uvx orilos-mcp studio" />
-        </Card>
-      </div>
+        </div>
+      </Card>
     </>
   );
 }

@@ -1708,3 +1708,169 @@
 .ws-heat-row.head span:not(:first-child) {
   justify-self: center;
 }
+
+/* ── Schedule: plan on the left, what goes out next on the right ── */
+.ws-sched-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 1fr);
+  gap: 20px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+.ws-sched-plan .ws-field {
+  margin-bottom: 14px;
+}
+.ws-pfs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ws-pfs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px 7px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--o-pill);
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 14px;
+  transition: border-color 0.15s var(--o-ease), color 0.15s var(--o-ease), background 0.15s var(--o-ease);
+}
+.ws-pfs button:hover {
+  border-color: var(--border-2);
+  color: var(--text);
+}
+.ws-pfs button.on {
+  border-color: color-mix(in srgb, var(--o-pink) 70%, transparent);
+  background: color-mix(in srgb, var(--o-pink) 12%, var(--surface-2));
+  color: var(--text);
+}
+.ws-pfs button:not(.on) .ws-pf {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+.ws-pf {
+  flex: none;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.ws-slots {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.ws-slots li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--o-r);
+  background: var(--surface-2);
+}
+.ws-slots li > span {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.ws-slots b {
+  font-weight: 600;
+  font-size: 15px;
+}
+.ws-slots small {
+  color: var(--text-2);
+  font-size: 13px;
+}
+.ws-slots em {
+  font-style: normal;
+  color: var(--text-3);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.ws-slots li.first {
+  border-color: color-mix(in srgb, var(--o-pink) 55%, transparent);
+  background: color-mix(in srgb, var(--o-pink) 9%, var(--surface-2));
+}
+.ws-slots li.first em {
+  color: var(--o-pink);
+  font-weight: 600;
+}
+.ws-heat-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.ws-heat-row.dim {
+  opacity: 0.35;
+}
+.ws-heat-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  margin-top: 14px;
+}
+.ws-heat-foot .ac-fine {
+  margin: 0;
+}
+.ws-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.ws-legend i {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--surface-2);
+}
+.ws-legend i.best {
+  background: var(--accent-cell, var(--o-pink));
+}
+.ws-legend i.now {
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--text) 70%, transparent);
+}
+.ws .ac-card.ws-studio-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: center;
+  margin-top: 20px;
+}
+.ws-studio-row h2 {
+  margin: 0 0 14px;
+}
+.ws-studio-row .ws-sheet {
+  max-height: 320px;
+}
+.ws-ticks li::before {
+  content: '✓';
+  color: var(--o-pink);
+  background: color-mix(in srgb, var(--o-pink) 12%, transparent);
+  border-color: color-mix(in srgb, var(--o-pink) 35%, transparent);
+}
+@media (max-width: 980px) {
+  .ws-sched-top,
+  .ws .ac-card.ws-studio-row {
+    grid-template-columns: 1fr;
+  }
+}
+.ws-studio-row > div {
+  display: grid;
+  gap: 14px;
+}
+.ws-studio-row > div h2 {
+  margin: 0;
+  font: 600 20px/1.3 var(--o-body);
+}
+.ws-studio-row > div .ws-plan-steps {
+  margin: 0;
+}
+.ws-studio-row > div .ac-fine {
+  margin: 4px 0 0;
+}
