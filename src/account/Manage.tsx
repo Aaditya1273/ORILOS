@@ -214,7 +214,7 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
             {sub
               ? sub.endsAt && LIVE_STATUSES.has(sub.status ?? '')
                 ? `Cancelled · ${current.name} stays on until ${when(sub.endsAt, me.timezone)}. Changed your mind? Resume it in Manage billing.`
-                : `${STATUS[sub.status] ?? sub.status}${sub.renewsAt ? ` · renews ${when(sub.renewsAt, me.timezone)}` : ''}`
+                : `${STATUS[sub.status] ?? sub.status}${sub.renewsAt && LIVE_STATUSES.has(sub.status ?? '') ? ` · renews ${when(sub.renewsAt, me.timezone)}` : ''}`
               : 'Free forever. No card on file.'}
           </p>
         </div>
@@ -225,7 +225,7 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
                 {busy === 'cancel' && !cancel ? 'Checking…' : sub.endsAt ? 'Refund options' : 'Cancel plan'}
               </button>
             )}
-            <button className="ac-btn" onClick={() => open('portal')} disabled={!!busy}>
+            <button className="ac-btn soft" onClick={() => open('portal')} disabled={!!busy}>
               {busy === 'portal' ? 'Opening…' : 'Manage billing'}
             </button>
           </div>

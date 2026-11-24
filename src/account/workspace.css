@@ -1592,3 +1592,14 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Secondary actions (Manage billing): grey in dark mode, so pink stays the one call to action */
+:root:not([data-theme='light']) .ws .ac-btn.soft {
+  background: var(--surface-2);
+  border-color: var(--border-2, var(--border));
+  color: var(--text) !important;
+}
+:root:not([data-theme='light']) .ws .ac-btn.soft:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--text) 12%, var(--surface-2));
+  border-color: color-mix(in srgb, var(--text) 22%, transparent);
+}
