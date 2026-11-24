@@ -1,18 +1,32 @@
 // Plugin: ORILOS works inside the AI people already use. Pick the app, get its steps.
-import { Check, ExternalLink } from 'lucide-react';
+import { ExternalLink, Plug, SquareTerminal } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { api } from './api';
+import { APP_LOGOS, type AppLogo } from './logos';
 import { Card, CopyLine, Head, type Ctx } from './ui';
 
 const MCP_URL = `${location.origin}/mcp`;
 
 type AppId = 'desktop' | 'web' | 'other';
-const APPS: { id: AppId; name: string; sub: string }[] = [
-  { id: 'desktop', name: 'Claude Code, Codex, Cursor and more', sub: 'Apps on your computer' },
-  { id: 'web', name: 'claude.ai', sub: 'Claude on the web and phone' },
-  { id: 'other', name: 'Any other MCP app', sub: 'Add it by hand' },
+type Mark = AppLogo | 'codex' | 'plug';
+const APPS: { id: AppId; name: string; sub: string; marks: Mark[] }[] = [
+  { id: 'desktop', name: 'Claude Code, Codex, Cursor and more', sub: 'Apps on your computer', marks: ['claude', 'codex', 'cursor', 'windsurf'] },
+  { id: 'web', name: 'claude.ai', sub: 'Claude on the web and phone', marks: ['claude'] },
+  { id: 'other', name: 'Any other MCP app', sub: 'Add it by hand', marks: ['mcp'] },
 ];
-const DESKTOP_APPS = ['Claude Code', 'Codex', 'Claude Desktop', 'Cursor', 'Windsurf'];
+const DESKTOP_APPS: [string, Mark][] = [['Claude Code', 'claude'], ['Codex', 'codex'], ['Claude Desktop', 'claude'], ['Cursor', 'cursor'], ['Windsurf', 'windsurf']];
+
+/** An app's logo (Simple Icons); Claude keeps its orange, the others follow the text colour. Codex has no free logo. */
+function Logo({ mark, size = 20 }: { mark: Mark; size?: number }) {
+  if (mark === 'codex') return <SquareTerminal size={size} className="ws-logo" aria-hidden="true" />;
+  if (mark === 'plug') return <Plug size={size} className="ws-logo" aria-hidden="true" />;
+  const l = APP_LOGOS[mark];
+  return (
+    <svg className="ws-logo" viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
+      <path d={l.d} fill={mark === 'claude' ? l.hex : 'currentColor'} />
+    </svg>
+  );
+}
 const CONFIG = `{
   "mcpServers": {
     "orilos": { "command": "uvx", "args": ["orilos-mcp"] }
@@ -75,6 +89,11 @@ export function ClaudeConnect({ go }: Ctx) {
       <div className="ws-apps" role="tablist" aria-label="Your AI app">
         {APPS.map((a) => (
           <button key={a.id} role="tab" aria-selected={app === a.id} className={app === a.id ? 'on' : ''} onClick={() => pick(a.id)}>
+            <span className="ws-app-marks">
+              {a.marks.map((m) => (
+                <Logo key={m} mark={m} size={22} />
+              ))}
+            </span>
             <b>{a.name}</b>
             <small>{a.sub}</small>
           </button>
@@ -85,9 +104,9 @@ export function ClaudeConnect({ go }: Ctx) {
         <>
           <Card title="One command connects all of them">
             <p className="ac-mute ws-app-list">
-              {DESKTOP_APPS.map((n) => (
+              {DESKTOP_APPS.map(([n, m]) => (
                 <span key={n}>
-                  <Check size={14} aria-hidden="true" /> {n}
+                  <Logo mark={m} size={18} /> {n}
                 </span>
               ))}
             </p>

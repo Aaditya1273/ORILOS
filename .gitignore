@@ -11,3 +11,7 @@ dist
 .dev.vars
 .env
 .env.*
+
+# Rockstar GTA VI artwork: used on the live site with credit, never committed to this public repo
+public/gta6/
+public/logos/

@@ -2087,7 +2087,7 @@
   color: var(--text);
 }
 .ws-app-list svg {
-  color: var(--o-pink);
+  color: var(--text);
 }
 .ws-config {
   margin: 0;
@@ -2129,4 +2129,148 @@
 }
 .ws-out .ac-fine {
   margin: 0;
+}
+
+/* Home: GTA VI banner (art left of a dark fade, text on the dark side) */
+.ws-gta-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 240px;
+  margin: 0 0 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--o-r-xl);
+  background: #050506;
+  overflow: hidden;
+  text-decoration: none;
+  color: #fff;
+  isolation: isolate;
+  transition: border-color 0.2s var(--o-ease), transform 0.2s var(--o-ease);
+}
+.ws-gta-banner:hover {
+  border-color: color-mix(in srgb, var(--o-pink) 55%, transparent);
+  transform: translateY(-2px);
+}
+.ws-gta-banner img {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 64%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 30%;
+  z-index: -2;
+}
+.ws-gta-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #050506 36%, rgba(5, 5, 6, 0.85) 48%, rgba(5, 5, 6, 0.15) 72%, transparent);
+  z-index: -1;
+}
+.ws-gta-banner-copy {
+  display: grid;
+  gap: 10px;
+  max-width: 460px;
+  padding: 36px 40px;
+}
+.ws-gta-banner-copy h2 {
+  margin: 0;
+  font: 700 30px/1.15 var(--o-display);
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.ws-gta-banner-copy p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 15px;
+}
+.ws-gta-banner-btn {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  background: #fff !important;
+  border-color: #fff !important;
+  color: #000 !important;
+  font-weight: 600;
+}
+.ws-gta-credit {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 3px 9px;
+  border-radius: var(--o-pill);
+  background: rgba(0, 0, 0, 0.55);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 11px;
+}
+@media (max-width: 760px) {
+  .ws-gta-banner img {
+    width: 100%;
+    opacity: 0.45;
+  }
+  .ws-gta-banner::before {
+    background: linear-gradient(90deg, rgba(5, 5, 6, 0.9), rgba(5, 5, 6, 0.4));
+  }
+  .ws-gta-banner-copy {
+    padding: 28px 24px;
+  }
+  .ws-gta-banner-copy h2 {
+    font-size: 24px;
+  }
+}
+
+/* Plugin: logos and a clearer step hierarchy */
+.ws-app-marks {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.ws-logo {
+  flex: none;
+  display: block;
+}
+.ws-apps button {
+  gap: 2px;
+  padding: 18px 20px;
+}
+.ws-apps b {
+  font-size: 16px;
+}
+.ws-app-list {
+  gap: 10px;
+}
+.ws-app-list span {
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--o-pill);
+  background: var(--surface-2);
+  font-size: 14px;
+  font-weight: 500;
+}
+.ws .ac-card .ws-connect-steps {
+  gap: 26px;
+  margin-top: 22px;
+}
+.ws-connect-steps li > b {
+  font: 600 16px/24px var(--o-body);
+  color: var(--text);
+}
+.ws-connect-steps li::before {
+  top: 1px;
+  width: 24px;
+  height: 24px;
+  background: var(--o-pink);
+  color: #fff;
+}
+.ws-connect-steps .ac-fine {
+  color: var(--text-2);
+  font-size: 14px;
+}
+.ws .ws-connect-steps .ac-copy {
+  border-color: var(--border-2);
 }

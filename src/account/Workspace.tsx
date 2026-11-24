@@ -289,6 +289,18 @@ export function Home({ me, go }: Ctx) {
         </div>
       </section>
 
+      <a className="ws-gta-banner" href="/account/gta" onClick={link(go, '/account/gta')}>
+        <div className="ws-gta-banner-copy">
+          <h2>GTA VI is here. Clip its best moments.</h2>
+          <p>{GTA_VIDEOS.length} trending GTA VI videos ready to clip, or paste any GTA VI link.</p>
+          <span className="ac-btn ws-gta-banner-btn">
+            Open the GTA VI hub <ArrowRight size={16} aria-hidden="true" />
+          </span>
+        </div>
+        <img src="/gta6/banner.webp" alt="" loading="lazy" onError={(e) => (e.currentTarget.style.display = 'none')} />
+        <span className="ws-gta-credit">Art: Rockstar Games</span>
+      </a>
+
       <Section title="Start here" sub="The four things creators use every day.">
         <div className="ws-features">
           {FEATURES.map((f) => (
