@@ -2274,3 +2274,10 @@
 .ws .ws-connect-steps .ac-copy {
   border-color: var(--border-2);
 }
+/* Banner button: white at rest, pink with white text when the banner (one big link) is hovered */
+.ws-gta-banner:hover .ws-gta-banner-btn,
+.ws-gta-banner:focus-visible .ws-gta-banner-btn {
+  background: var(--o-pink) !important;
+  border-color: var(--o-pink) !important;
+  color: #fff !important;
+}
