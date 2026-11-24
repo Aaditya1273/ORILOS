@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /account
+Disallow: /api/
+Disallow: /oauth/
+Disallow: /app
+
+Sitemap: https://orilos.pages.dev/sitemap.xml

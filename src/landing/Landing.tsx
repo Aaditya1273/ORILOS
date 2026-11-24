@@ -391,7 +391,7 @@ function Autopilot() {
           <br />
           <span className="pink">It clips.</span>
         </h2>
-        <p className="lp-body rv">Autopilot watches your Twitch, Kick and YouTube channels. It records live streams with the chat and clips the peaks of every VOD. Approve them in the Studio, or let it post at the best hours.</p>
+        <p className="lp-body rv">Autopilot watches your Twitch, Kick and YouTube channels. It records live streams with the chat and clips the peaks of every VOD. Approve them in the Studio, or let it post at the best hours. Part of Pro.</p>
         <button className="lp-cmd" onClick={() => copy("auto", cmd)}>
           <code>{cmd}</code>
           {done === "auto" ? <Check size={18} aria-label="Copied" /> : <Copy size={18} aria-label="Copy" />}
@@ -526,7 +526,7 @@ function Install() {
           </div>
         ))}
       </dl>
-      <p className="lp-facts">Free. No AI key. Runs on your PC. Brand kits, a posting calendar, nine platforms.</p>
+      <p className="lp-facts">Free to clip. No AI key. Runs on your PC. Post to nine platforms; Pro adds brand kits, a posting calendar and Autopilot.</p>
     </section>
   );
 }
