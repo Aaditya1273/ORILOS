@@ -1,5 +1,5 @@
 // Account management: profile, billing, licence keys and settings.
-import { Check } from 'lucide-react';
+import { Check, KeyRound } from 'lucide-react';
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { ago, api, device, getMe, when, type LicenceKey, type Me, type Session } from './api';
 import { loadPaddle } from './paddle';
@@ -185,7 +185,9 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
           </p>
           <p className="ac-fine">
             {sub
-              ? `${STATUS[sub.status] ?? sub.status}${sub.renewsAt && !sub.endsAt ? ` · renews ${when(sub.renewsAt, me.timezone)}` : ''}${sub.endsAt ? ` · ends ${when(sub.endsAt, me.timezone)}` : ''}`
+              ? sub.endsAt && LIVE_STATUSES.has(sub.status ?? '')
+                ? `Cancelled · ${current.name} stays on until ${when(sub.endsAt, me.timezone)}. Changed your mind? Resume it in Manage billing.`
+                : `${STATUS[sub.status] ?? sub.status}${sub.renewsAt ? ` · renews ${when(sub.renewsAt, me.timezone)}` : ''}`
               : 'Free forever. No card on file.'}
           </p>
         </div>
@@ -278,14 +280,30 @@ export function Keys({ me }: Ctx) {
 
       {fresh && (
         <Card className="ac-fresh">
-          <h2>Your new key</h2>
-          <p className="ac-mute">Copy it now. For your safety we only show it once.</p>
-          <CopyLine text={fresh} label="Copy key" />
-          <p className="ac-stat-label">Then run this on that computer</p>
-          <CopyLine text={`uvx orilos-mcp activate ${fresh}`} label="Copy command" />
-          <button className="ac-link" onClick={() => setFresh(null)}>
-            I saved it
-          </button>
+          <div className="ac-fresh-head">
+            <span className="ac-fresh-icon" aria-hidden="true">
+              <KeyRound size={18} />
+            </span>
+            <div>
+              <h2>Your new key is ready</h2>
+              <p className="ac-mute">Copy it now: we only show it once. Treat it like a password.</p>
+            </div>
+          </div>
+          <ol className="ac-fresh-steps">
+            <li>
+              <b>Copy your key</b>
+              <CopyLine text={fresh} label="Copy key" />
+            </li>
+            <li>
+              <b>Run this on the computer you clip on</b>
+              <CopyLine text={`uvx orilos-mcp activate ${fresh}`} label="Copy command" />
+            </li>
+          </ol>
+          <div className="ac-fresh-foot">
+            <button className="ac-btn" onClick={() => setFresh(null)}>
+              Done, hide the key
+            </button>
+          </div>
         </Card>
       )}
 
@@ -321,7 +339,7 @@ export function Keys({ me }: Ctx) {
                   <code>{k.prefix}…</code>
                 </span>
                 <span role="cell">{when(k.createdAt)}</span>
-                <span role="cell">{ago(k.usedAt)}</span>
+                <span role="cell" className={k.usedAt ? '' : 'ac-faint'}>{k.usedAt ? ago(k.usedAt) : 'Not used yet'}</span>
                 <span role="cell" className="ac-end">
                   {confirm === k.id ? (
                     <>
@@ -333,7 +351,7 @@ export function Keys({ me }: Ctx) {
                       </button>
                     </>
                   ) : (
-                    <button className="ac-link" onClick={() => setConfirm(k.id)}>
+                    <button className="ac-btn ghost small" onClick={() => setConfirm(k.id)}>
                       Revoke
                     </button>
                   )}

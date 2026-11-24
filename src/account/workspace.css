@@ -1382,3 +1382,75 @@
 .ws-pro-note {
   margin: 4px 0 0;
 }
+
+/* New licence key: the one card on the page that needs action now */
+.ws .ac-card.ac-fresh {
+  border-color: color-mix(in srgb, var(--o-pink) 55%, var(--border));
+  background: color-mix(in srgb, var(--o-pink) 5%, var(--surface));
+}
+.ac-fresh-head {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.ac-fresh-head h2 {
+  margin: 2px 0 4px;
+}
+.ac-fresh-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--o-r-sm);
+  background: color-mix(in srgb, var(--o-pink) 16%, transparent);
+  color: var(--o-pink);
+}
+.ac-fresh-steps {
+  display: grid;
+  gap: 16px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.ac-fresh-steps li {
+  display: grid;
+  gap: 8px;
+  padding-left: 34px;
+  position: relative;
+  counter-increment: step;
+}
+.ac-fresh-steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--o-pill);
+  display: grid;
+  place-items: center;
+  background: var(--text);
+  color: var(--surface);
+  font: 600 12px/1 var(--o-body);
+}
+.ac-fresh-steps b {
+  font: 500 14px/22px var(--o-body);
+  color: var(--text);
+}
+.ac-fresh-foot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+.ws .ac-tr code {
+  color: var(--text-2);
+}
+.ac-faint {
+  color: var(--text-3);
+}
+/* A clicked copy button shouldn't keep a focus ring; keyboard focus still shows one */
+.ac-copy button:focus:not(:focus-visible) {
+  outline: none;
+}
