@@ -63,6 +63,20 @@ function Chips({ value, options, onChange, label }: { value: string[]; options: 
   );
 }
 
+/** One choice from many: separate pills that wrap cleanly (a segmented control is for 2 to 4 short options). */
+function Pick<T extends string | number>({ value, options, onChange, label }: { value: T; options: [T, string][]; onChange: (v: T) => void; label: string }) {
+  return (
+    <div className="ws-chips" role="radiogroup" aria-label={label}>
+      {options.map(([v, text]) => (
+        <button key={String(v)} type="button" role="radio" aria-checked={value === v} className={value === v ? 'on' : ''} onClick={() => onChange(v)}>
+          {value === v && <Check size={14} aria-hidden="true" />}
+          {text}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="ws-field">
@@ -772,7 +786,7 @@ export function GtaHub(_: Ctx) {
             <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="Paste a GTA VI video, VOD or stream link" aria-label="GTA VI video link" inputMode="url" />
           </label>
           <Field label="Focus on">
-            <Seg<GtaFocus>
+            <Pick<GtaFocus>
               label="Focus"
               value={focus}
               onChange={setFocus}

@@ -678,7 +678,10 @@
 }
 .ws-seg {
   display: inline-flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* wrapping breaks the pill: a crowded control scrolls inside it instead */
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
   gap: 2px;
   padding: 3px;
   border: 1px solid var(--border);
@@ -687,6 +690,8 @@
   justify-self: start;
 }
 .ws-seg button {
+  flex: none;
+  white-space: nowrap;
   padding: 7px 14px;
   border: 0;
   border-radius: var(--o-pill);
@@ -1935,9 +1940,6 @@
 .ws-gta-builder .ws-field {
   margin-bottom: 12px;
 }
-.ws-gta-builder .ws-seg {
-  flex-wrap: wrap;
-}
 .ws-gta-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -2019,5 +2021,23 @@
 @media (max-width: 980px) {
   .ws-gta-top {
     grid-template-columns: 1fr;
+  }
+}
+/* Phones: a segmented control becomes separate pills that wrap, so no option is cut off and no pill breaks */
+@media (max-width: 560px) {
+  .ws-seg {
+    flex-wrap: wrap;
+    overflow: visible;
+    gap: 8px;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+  .ws-seg button {
+    border: 1px solid var(--border-2);
+    padding: 7px 13px;
+  }
+  .ws-seg button.on {
+    border-color: var(--text);
   }
 }
