@@ -2157,7 +2157,7 @@
   width: 64%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 30%;
+  object-position: 50% 0%; /* keep faces: the art's heads are at the top */
   z-index: -2;
 }
 .ws-gta-banner::before {

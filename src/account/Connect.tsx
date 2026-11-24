@@ -1,5 +1,5 @@
 // Plugin: ORILOS works inside the AI people already use. Pick the app, get its steps.
-import { ExternalLink, Plug, SquareTerminal } from 'lucide-react';
+import { ExternalLink, Plug } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { api } from './api';
 import { APP_LOGOS, type AppLogo } from './logos';
@@ -8,17 +8,47 @@ import { Card, CopyLine, Head, type Ctx } from './ui';
 const MCP_URL = `${location.origin}/mcp`;
 
 type AppId = 'desktop' | 'web' | 'other';
-type Mark = AppLogo | 'codex' | 'plug';
+type Mark = AppLogo | 'claudecode' | 'codex' | 'plug';
 const APPS: { id: AppId; name: string; sub: string; marks: Mark[] }[] = [
-  { id: 'desktop', name: 'Claude Code, Codex, Cursor and more', sub: 'Apps on your computer', marks: ['claude', 'codex', 'cursor', 'windsurf'] },
+  { id: 'desktop', name: 'Claude Code, Codex, Cursor and more', sub: 'Apps on your computer', marks: ['claudecode', 'codex', 'cursor', 'windsurf'] },
   { id: 'web', name: 'claude.ai', sub: 'Claude on the web and phone', marks: ['claude'] },
   { id: 'other', name: 'Any other MCP app', sub: 'Add it by hand', marks: ['mcp'] },
 ];
-const DESKTOP_APPS: [string, Mark][] = [['Claude Code', 'claude'], ['Codex', 'codex'], ['Claude Desktop', 'claude'], ['Cursor', 'cursor'], ['Windsurf', 'windsurf']];
+const DESKTOP_APPS: [string, Mark][] = [['Claude Code', 'claudecode'], ['Codex', 'codex'], ['Claude Desktop', 'claude'], ['Cursor', 'cursor'], ['Windsurf', 'windsurf']];
 
-/** An app's logo (Simple Icons); Claude keeps its orange, the others follow the text colour. Codex has no free logo. */
+// Claude Code's pixel mascot, drawn on a 19 x 15 grid.
+const CLAUDE_CODE_PIXELS = 'M2 0h15v6h2v3h-2v3h-1v3h-1v-3h-1v3h-1v-3h-5v3h-1v-3h-1v3h-1v-3h-1v-3h-2v-3h2z';
+
+/** An app's logo: Simple Icons where it has one (Claude keeps its orange, the others follow the text colour);
+ *  Claude Code's pixel mascot and the Codex cloud are drawn here. */
 function Logo({ mark, size = 20 }: { mark: Mark; size?: number }) {
-  if (mark === 'codex') return <SquareTerminal size={size} className="ws-logo" aria-hidden="true" />;
+  if (mark === 'claudecode')
+    return (
+      <svg className="ws-logo" viewBox="0 0 19 15" width={size} height={size} aria-hidden="true" shapeRendering="crispEdges">
+        <path d={CLAUDE_CODE_PIXELS} fill="#D97757" />
+        <path d="M6 2h1v2H6zM12 2h1v2h-1z" fill="#000" />
+      </svg>
+    );
+  if (mark === 'codex')
+    return (
+      <svg className="ws-logo" viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
+        <defs>
+          <linearGradient id="codex-g" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#8EA6FF" />
+            <stop offset="0.55" stopColor="#5B5CF0" />
+            <stop offset="1" stopColor="#3A2FD6" />
+          </linearGradient>
+        </defs>
+        <g fill="url(#codex-g)">
+          <circle cx="12" cy="12" r="8" />
+          {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
+            <circle key={a} cx={12 + 7.2 * Math.cos((a * Math.PI) / 180)} cy={12 + 7.2 * Math.sin((a * Math.PI) / 180)} r="3.6" />
+          ))}
+        </g>
+        <path d="M7.4 8.6l3.4 3.4-3.4 3.4" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12.4 15.6h4.6" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" />
+      </svg>
+    );
   if (mark === 'plug') return <Plug size={size} className="ws-logo" aria-hidden="true" />;
   const l = APP_LOGOS[mark];
   return (
