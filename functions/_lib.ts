@@ -35,6 +35,7 @@ export interface User {
   sub_renews_at: number | null;
   sub_ends_at: number | null;
   customer_id: string | null;
+  refunded_at: number | null;
 }
 
 export const SESSION_COOKIE = '__Host-orilos';
@@ -119,6 +120,8 @@ export function publicUser(u: User) {
 }
 
 export const billingReady = (env: Env) => Boolean(env.PADDLE_API_KEY && env.PADDLE_WEBHOOK_SECRET && env.PADDLE_CLIENT_TOKEN);
+/** Days after the first payment in which a subscription can be cancelled for a full refund (see the terms). */
+export const REFUND_DAYS = 14;
 export const paddleEnv = (env: Env) => (env.PADDLE_ENV === 'production' ? 'production' : 'sandbox');
 
 export function priceFor(env: Env, plan: PlanId, interval: Interval): string {
@@ -152,10 +155,10 @@ export async function verifySignature(secret: string, body: string, header: stri
   return false;
 }
 
-export async function paddle(env: Env, path: string, body?: unknown): Promise<Response> {
+export async function paddle(env: Env, path: string, body?: unknown, method?: string): Promise<Response> {
   const host = paddleEnv(env) === 'production' ? 'https://api.paddle.com' : 'https://sandbox-api.paddle.com';
   return fetch(`${host}${path}`, {
-    method: body === undefined ? 'GET' : 'POST',
+    method: method ?? (body === undefined ? 'GET' : 'POST'),
     headers: { authorization: `Bearer ${env.PADDLE_API_KEY}`, 'content-type': 'application/json' },
     body: body === undefined ? undefined : JSON.stringify(body),
   });

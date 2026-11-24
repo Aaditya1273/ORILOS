@@ -163,6 +163,32 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
 
   const sub = me.subscription;
   const current = planOf(me.plan);
+  const live = !!sub && LIVE_STATUSES.has(sub.status ?? '');
+  const [cancel, setCancel] = useState<{ refundable: boolean; refundUntil: number | null; cancelled: boolean } | null>(null);
+  const [notice, setNotice] = useState('');
+  const askCancel = async () => {
+    setBusy('cancel');
+    setError('');
+    try {
+      setCancel(await api<{ refundable: boolean; refundUntil: number | null; cancelled: boolean }>('/billing/cancel'));
+    } catch (e) {
+      setError((e as Error).message);
+    }
+    setBusy('');
+  };
+  const doCancel = async () => {
+    setBusy('cancel');
+    setError('');
+    try {
+      const r = await api<{ refunded: boolean }>('/billing/cancel', { method: 'POST' });
+      setMe((await getMe()).user);
+      setNotice(r.refunded ? 'Cancelled and refunded. Paddle returns the money to your card or account, usually within 5 to 10 business days. You are on Free now.' : `Cancelled. ${current.name} stays on until the end of the period you paid for, and you will not be charged again.`);
+      setCancel(null);
+    } catch (e) {
+      setError((e as Error).message);
+    }
+    setBusy('');
+  };
   return (
     <>
       <Head title="Billing" sub="Your plan, payments and invoices." />
@@ -192,11 +218,45 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
           </p>
         </div>
         {sub && (
-          <button className="ac-btn" onClick={() => open('portal')} disabled={!!busy}>
-            {busy === 'portal' ? 'Opening…' : 'Manage billing'}
-          </button>
+          <div className="ac-end">
+            {live && (
+              <button className="ac-btn ghost" onClick={askCancel} disabled={!!busy}>
+                {busy === 'cancel' && !cancel ? 'Checking…' : sub.endsAt ? 'Refund options' : 'Cancel plan'}
+              </button>
+            )}
+            <button className="ac-btn" onClick={() => open('portal')} disabled={!!busy}>
+              {busy === 'portal' ? 'Opening…' : 'Manage billing'}
+            </button>
+          </div>
         )}
       </Card>
+
+      {notice && (
+        <p className="ac-alert ok" role="status">
+          {notice}
+        </p>
+      )}
+      {cancel && (
+        <Card className="ac-confirm" title={cancel.refundable ? 'Cancel and get a full refund?' : cancel.cancelled ? 'Your plan is already cancelled' : `Cancel ${current.name}?`}>
+          <p className="ac-mute">
+            {cancel.refundable
+              ? `You are within 14 days of your first payment${cancel.refundUntil ? ` (until ${when(cancel.refundUntil, me.timezone)})` : ''}, so we refund it in full and your plan switches to Free right away.`
+              : cancel.cancelled
+                ? `${current.name} stays on until ${sub?.endsAt ? when(sub.endsAt, me.timezone) : 'the end of the period you paid for'}, then switches to Free. Refunds are only for the first 14 days after your first payment.`
+                : `${current.name} stays on until ${sub?.renewsAt ? when(sub.renewsAt, me.timezone) : 'the end of the period you paid for'}, then switches to Free. You will not be charged again. Refunds are only for the first 14 days after your first payment.`}
+          </p>
+          <div className="ac-end">
+            <button className="ac-btn ghost" onClick={() => setCancel(null)} disabled={!!busy}>
+              Keep {current.name}
+            </button>
+            {(cancel.refundable || !cancel.cancelled) && (
+              <button className="ac-btn danger" onClick={doCancel} disabled={!!busy}>
+                {busy === 'cancel' ? 'Cancelling…' : cancel.refundable ? 'Cancel and refund' : 'Cancel plan'}
+              </button>
+            )}
+          </div>
+        </Card>
+      )}
 
       {!sub || !LIVE_STATUSES.has(sub.status ?? '') ? (
         <>
