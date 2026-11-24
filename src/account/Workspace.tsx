@@ -18,7 +18,7 @@ import {
 import { useMemo, useState, type MouseEvent, type ReactNode } from 'react';
 import { STYLES, VOICE_LANGUAGES } from '../docs/data';
 import { ago } from './api';
-import { plan as planOf } from './plans';
+import { FREE_STYLES, plan as planOf } from './plans';
 import { autopilotPrompt, BEST_HOURS, clipPrompt, DEFAULT_CHOICES, EDITS, PLATFORMS, type ClipChoices, type Edit, type WatchChoices } from './prompts';
 import { Card, CopyLine, Head, useKeys, type Ctx, type Go } from './ui';
 
@@ -89,10 +89,13 @@ const link = (go: Go, to: string) => (e: MouseEvent) => {
 
 /* ── The clip builder ──────────────────────────────────────── */
 
-function Builder({ initialUrl = '' }: { initialUrl?: string }) {
+function Builder({ initialUrl = '', free = false }: { initialUrl?: string; free?: boolean }) {
   const [c, setC] = useState<ClipChoices>({ ...DEFAULT_CHOICES, url: initialUrl });
   const set = (patch: Partial<ClipChoices>) => setC({ ...c, ...patch });
   const prompt = clipPrompt(c);
+  const pro = (label: string) => (free ? `${label} (Pro)` : label);
+  const [HOOK, BRAND] = [pro('Spoken hook'), pro('My brand kit')];
+  const needsPro = free && ((c.style && !FREE_STYLES.has(c.style)) || c.voiceHook || c.brand || c.when === 'best');
 
   return (
     <div className="ws-builder">
@@ -110,6 +113,7 @@ function Builder({ initialUrl = '' }: { initialUrl?: string }) {
                 {STYLES.map((s) => (
                   <option key={s.name} value={s.name}>
                     {s.name}: {s.look}
+                    {free && !FREE_STYLES.has(s.name) ? ' (Pro)' : ''}
                   </option>
                 ))}
               </select>
@@ -128,13 +132,13 @@ function Builder({ initialUrl = '' }: { initialUrl?: string }) {
             <Field label="Extras">
               <Chips
                 label="Extras"
-                value={[c.voiceHook && 'Spoken hook', c.brand && 'My brand kit'].filter(Boolean) as string[]}
-                options={['Spoken hook', 'My brand kit']}
-                onChange={(v) => set({ voiceHook: v.includes('Spoken hook'), brand: v.includes('My brand kit') })}
+                value={[c.voiceHook && HOOK, c.brand && BRAND].filter(Boolean) as string[]}
+                options={[HOOK, BRAND]}
+                onChange={(v) => set({ voiceHook: v.includes(HOOK), brand: v.includes(BRAND) })}
               />
             </Field>
             <Field label="Then">
-              <Seg label="After clipping" value={c.when} onChange={(when) => set({ when })} options={[['none', 'Just clip'], ['now', 'Post the best one'], ['best', 'Schedule them all']]} />
+              <Seg label="After clipping" value={c.when} onChange={(when) => set({ when })} options={[['none', 'Just clip'], ['now', 'Post the best one'], ['best', pro('Schedule them all')]]} />
             </Field>
             {c.when !== 'none' && (
               <Field label="Where">
@@ -142,6 +146,11 @@ function Builder({ initialUrl = '' }: { initialUrl?: string }) {
               </Field>
             )}
       </div>
+      {needsPro && (
+        <p className="ac-fine ws-pro-note">
+          Some choices need Pro. <a href="/account/billing">Go Pro</a> or change them, or your AI will say they are locked.
+        </p>
+      )}
       <PromptOut text={prompt} />
     </div>
   );
@@ -385,14 +394,14 @@ export function Home({ me, go }: Ctx) {
 
 /* ── Create ────────────────────────────────────────────────── */
 
-export function Create(_: Ctx) {
+export function Create({ me }: Ctx) {
   const url = new URLSearchParams(location.search).get('url') ?? '';
   return (
     <>
       <Head title="Clip builder" sub="Pick what you want. ORILOS turns it into one sentence for your AI." />
       <div className="ws-create">
         <Card>
-          <Builder initialUrl={url} />
+          <Builder initialUrl={url} free={me.plan === 'free'} />
         </Card>
         <Card title="What happens next" className="ws-how">
           <ol>
@@ -438,7 +447,8 @@ const STYLE_FILTERS: [string, RegExp][] = [
   ['Minimal', /minimal|clean|calm|subtle|explainer/i],
 ];
 
-export function Styles(_: Ctx) {
+export function Styles({ me }: Ctx) {
+  const free = me.plan === 'free';
   const [q, setQ] = useState('');
   const [filter, setFilter] = useState('All');
   const [copied, copy] = useCopy();
@@ -453,7 +463,10 @@ export function Styles(_: Ctx) {
 
   return (
     <>
-      <Head title="Caption styles" sub={`${STYLES.length} looks. Click one to copy the prompt that uses it.`} />
+      <Head
+        title="Caption styles"
+        sub={`${STYLES.length} looks. Click one to copy the prompt that uses it.${free ? ` ${FREE_STYLES.size} are on Free; Pro unlocks all.` : ''}`}
+      />
       <div className="ws-toolbar">
         <label className="ws-search">
           <Search size={16} aria-hidden="true" />
@@ -469,7 +482,10 @@ export function Styles(_: Ctx) {
             <button key={s.name} className="ws-style" onClick={() => copy(text)}>
               <img src={`/styles/${s.name}.webp`} alt={`The ${s.name} caption style`} loading="lazy" width="540" height="300" />
               <span className="ws-style-body">
-                <code>{s.name}</code>
+                <code>
+                  {s.name}
+                  {free && !FREE_STYLES.has(s.name) && <em className="ws-pro">Pro</em>}
+                </code>
                 <span>{s.look}</span>
                 <small>Best for {s.best_for.charAt(0).toLowerCase() + s.best_for.slice(1)}</small>
               </span>

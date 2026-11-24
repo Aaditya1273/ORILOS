@@ -39,8 +39,9 @@ export const PLANS: Plan[] = [
       'All 67 caption styles',
       'Brand kit: your logo, colours and font',
       'Best-time scheduling and the Studio calendar',
-      'Autopilot for Twitch, Kick and YouTube',
-      'Spoken hooks in 53 languages',
+      'Autopilot on 3 Twitch, Kick or YouTube channels',
+      'Spoken hooks and voiceovers in 53 languages',
+      'Use it on 3 computers',
       'Priority support',
     ],
     cta: 'Go Pro',
@@ -53,9 +54,8 @@ export const PLANS: Plan[] = [
     features: [
       'Everything in Pro',
       'Up to 10 brand kits',
-      'Up to 10 Autopilot channels',
-      '5 seats with their own licence keys',
-      'AI actor credits each month',
+      'Autopilot on up to 10 channels',
+      'Use it on 15 computers',
       'A direct line to the team',
     ],
     cta: 'Go Team',
@@ -63,6 +63,12 @@ export const PLANS: Plan[] = [
 ];
 
 export const plan = (id: string): Plan => PLANS.find((p) => p.id === id) ?? PLANS[0];
+
+/** Licence keys per plan: each key works on one computer. */
+export const KEY_LIMITS: Record<PlanId, number> = { free: 1, pro: 3, team: 15 };
+
+/** The caption styles on Free; the ORILOS app's Free list must match. */
+export const FREE_STYLES = new Set(['bold', 'hormozi', 'clean', 'pill', 'boxed', 'karaoke', 'neon', 'minimal', 'subtitle', 'oneword', 'comic', 'orilos']);
 
 /** A subscription in these states still has its plan (cancelled runs until the period ends). */
 export const LIVE_STATUSES = new Set(['active', 'on_trial', 'past_due', 'cancelled']);

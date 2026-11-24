@@ -1367,3 +1367,18 @@
 :root[data-theme='light'] .ws-float {
   background: rgba(255, 255, 255, 0.9);
 }
+
+/* Pro labels on Free */
+.ws-pro {
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: var(--o-pill);
+  background: color-mix(in srgb, var(--o-pink) 16%, transparent);
+  color: var(--o-pink);
+  font: normal 600 11px/1.4 var(--o-body);
+  letter-spacing: 0.02em;
+  vertical-align: 2px;
+}
+.ws-pro-note {
+  margin: 4px 0 0;
+}

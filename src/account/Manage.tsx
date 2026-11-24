@@ -2,7 +2,7 @@
 import { Check } from 'lucide-react';
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { ago, api, device, getMe, when, type LicenceKey, type Me, type Session } from './api';
-import { plan as planOf, PLANS, type Interval } from './plans';
+import { KEY_LIMITS, plan as planOf, PLANS, type Interval, type PlanId } from './plans';
 import { Avatar, Card, CopyLine, Head, useKeys, type Ctx } from './ui';
 
 /* ── Profile ───────────────────────────────────────────────── */
@@ -234,8 +234,9 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
 
 /* ── Keys ──────────────────────────────────────────────────── */
 
-export function Keys(_: Ctx) {
+export function Keys({ me }: Ctx) {
   const { keys, setKeys } = useKeys();
+  const max = KEY_LIMITS[me.plan as PlanId] ?? 1;
   const [name, setName] = useState('');
   const [fresh, setFresh] = useState<string | null>(null);
   const [confirm, setConfirm] = useState('');
@@ -261,7 +262,7 @@ export function Keys(_: Ctx) {
 
   return (
     <>
-      <Head title="Keys" sub="Licence keys connect ORILOS on your computer to this account." />
+      <Head title="Keys" sub={`Each licence key connects one computer to this account. Your ${planOf(me.plan).name} plan includes ${max} ${max === 1 ? 'computer' : 'computers'}.`} />
 
       {fresh && (
         <Card className="ac-fresh">
@@ -276,7 +277,7 @@ export function Keys(_: Ctx) {
         </Card>
       )}
 
-      <Card title="Create a key">
+      <Card title={keys ? `Create a key (${keys.length} of ${max} used)` : 'Create a key'}>
         <form className="ac-inline" onSubmit={create}>
           <input value={name} onChange={(e) => setName(e.target.value)} maxLength={40} placeholder="Name it after the computer, like Studio PC" aria-label="Key name" />
           <button className="ac-btn pink">Create key</button>
@@ -288,7 +289,7 @@ export function Keys(_: Ctx) {
         {!keys ? (
           <p className="ac-mute">Loading…</p>
         ) : keys.length === 0 ? (
-          <p className="ac-mute">No keys yet. Create one above for each computer you clip on.</p>
+          <p className="ac-mute">No keys yet. Create one above for each computer you clip on. A key stays with the first computer that uses it; revoke it to move to another.</p>
         ) : (
           <div className="ac-table" role="table">
             <div role="row" className="ac-tr head">

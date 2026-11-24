@@ -188,7 +188,7 @@ export function Account() {
             <BookOpen size={20} aria-hidden="true" />
             <span className="ws-label">Docs</span>
           </a>
-          <a href="https://github.com/Aaditya1273/ORILOS/issues" target="_blank" rel="noreferrer" data-tip="Support" aria-label={slim ? 'Support' : undefined}>
+          <a href="mailto:aaditya@agentmd.tech" data-tip="Support" aria-label={slim ? 'Support' : undefined}>
             <LifeBuoy size={20} aria-hidden="true" />
             <span className="ws-label">Support</span>
           </a>

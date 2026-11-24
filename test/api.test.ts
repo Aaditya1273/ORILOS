@@ -35,3 +35,14 @@ describe('account api', () => {
     expect('google_sub' in publicUser(u)).toBe(false);
   });
 });
+
+describe('plans', () => {
+  it('Free styles are 12 real styles and key limits grow with the plan', async () => {
+    const { STYLES } = await import('../src/docs/data');
+    const { FREE_STYLES, KEY_LIMITS } = await import('../src/account/plans');
+    const names = new Set(STYLES.map((s) => s.name));
+    expect(FREE_STYLES.size).toBe(12);
+    expect([...FREE_STYLES].every((s) => names.has(s))).toBe(true);
+    expect(KEY_LIMITS.free < KEY_LIMITS.pro && KEY_LIMITS.pro < KEY_LIMITS.team).toBe(true);
+  });
+});
