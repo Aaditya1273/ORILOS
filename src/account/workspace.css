@@ -1680,3 +1680,24 @@
   color: var(--text);
   font: 600 12px/1 var(--o-body);
 }
+
+/* Voice language flags */
+.ws-flag {
+  flex: none;
+  width: 24px;
+  height: 18px;
+  border-radius: 4px;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+:root[data-theme='light'] .ws-flag {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+.ws-langs code {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 18px;
+  border-radius: 4px;
+  background: var(--surface-2);
+}
