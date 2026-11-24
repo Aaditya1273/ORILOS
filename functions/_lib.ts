@@ -6,13 +6,16 @@ export interface Env {
   DB: D1Database;
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET?: string;
-  LS_API_KEY?: string;
-  LS_WEBHOOK_SECRET?: string;
-  LS_STORE_ID: string;
-  LS_VARIANT_PRO_MONTHLY: string;
-  LS_VARIANT_PRO_YEARLY: string;
-  LS_VARIANT_TEAM_MONTHLY: string;
-  LS_VARIANT_TEAM_YEARLY: string;
+  /** "sandbox" while testing, "production" when live. */
+  PADDLE_ENV: string;
+  /** Public: lets Paddle.js open the checkout. */
+  PADDLE_CLIENT_TOKEN: string;
+  PADDLE_PRICE_PRO_MONTHLY: string;
+  PADDLE_PRICE_PRO_YEARLY: string;
+  PADDLE_PRICE_TEAM_MONTHLY: string;
+  PADDLE_PRICE_TEAM_YEARLY: string;
+  PADDLE_API_KEY?: string;
+  PADDLE_WEBHOOK_SECRET?: string;
 }
 export type Fn = PagesFunction<Env>;
 
@@ -115,37 +118,46 @@ export function publicUser(u: User) {
   };
 }
 
-export const billingReady = (env: Env) => Boolean(env.LS_API_KEY && env.LS_STORE_ID && env.LS_WEBHOOK_SECRET);
+export const billingReady = (env: Env) => Boolean(env.PADDLE_API_KEY && env.PADDLE_WEBHOOK_SECRET && env.PADDLE_CLIENT_TOKEN);
+export const paddleEnv = (env: Env) => (env.PADDLE_ENV === 'production' ? 'production' : 'sandbox');
 
-export function variantFor(env: Env, plan: PlanId, interval: Interval): string {
+export function priceFor(env: Env, plan: PlanId, interval: Interval): string {
   const ids: Record<string, string> = {
-    'pro:monthly': env.LS_VARIANT_PRO_MONTHLY,
-    'pro:yearly': env.LS_VARIANT_PRO_YEARLY,
-    'team:monthly': env.LS_VARIANT_TEAM_MONTHLY,
-    'team:yearly': env.LS_VARIANT_TEAM_YEARLY,
+    'pro:monthly': env.PADDLE_PRICE_PRO_MONTHLY,
+    'pro:yearly': env.PADDLE_PRICE_PRO_YEARLY,
+    'team:monthly': env.PADDLE_PRICE_TEAM_MONTHLY,
+    'team:yearly': env.PADDLE_PRICE_TEAM_YEARLY,
   };
   return ids[`${plan}:${interval}`] ?? '';
 }
 
-export function planForVariant(env: Env, variantId: string | number): { plan: PlanId; interval: Interval } | null {
+export function planForPrice(env: Env, priceId: string): { plan: PlanId; interval: Interval } | null {
   for (const plan of ['pro', 'team'] as const)
     for (const interval of ['monthly', 'yearly'] as const)
-      if (variantFor(env, plan, interval) && variantFor(env, plan, interval) === String(variantId)) return { plan, interval };
+      if (priceId && priceFor(env, plan, interval) === priceId) return { plan, interval };
   return null;
 }
 
-/** Lemon Squeezy signs each webhook body with HMAC-SHA256 (hex) in X-Signature. Constant-time check. */
-export async function verifySignature(secret: string, body: string, signature: string): Promise<boolean> {
-  if (!/^[0-9a-f]{64}$/i.test(signature)) return false;
+/** Paddle signs "ts:body" with HMAC-SHA256 into `Paddle-Signature: ts=...;h1=...` (several h1 while a secret rotates).
+ *  Constant-time check; old timestamps are refused so a captured request can't be replayed. */
+export async function verifySignature(secret: string, body: string, header: string, now = Date.now() / 1000): Promise<boolean> {
+  const parts = header.split(';').map((p) => p.split('='));
+  const ts = parts.find(([k]) => k === 'ts')?.[1] ?? '';
+  const sigs = parts.filter(([k, v]) => k === 'h1' && /^[0-9a-f]{64}$/i.test(v ?? '')).map(([, v]) => v);
+  if (!/^\d+$/.test(ts) || Math.abs(now - Number(ts)) > 300 || !sigs.length) return false;
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
-  const sig = new Uint8Array(signature.match(/../g)!.map((h) => parseInt(h, 16)));
-  return crypto.subtle.verify('HMAC', key, sig, new TextEncoder().encode(body));
+  const data = new TextEncoder().encode(`${ts}:${body}`);
+  for (const sig of sigs)
+    if (await crypto.subtle.verify('HMAC', key, new Uint8Array(sig.match(/../g)!.map((h) => parseInt(h, 16))), data)) return true;
+  return false;
 }
 
-export async function lemon(env: Env, path: string, init: RequestInit = {}): Promise<Response> {
-  return fetch(`https://api.lemonsqueezy.com/v1${path}`, {
-    ...init,
-    headers: { accept: 'application/vnd.api+json', 'content-type': 'application/vnd.api+json', authorization: `Bearer ${env.LS_API_KEY}` },
+export async function paddle(env: Env, path: string, body?: unknown): Promise<Response> {
+  const host = paddleEnv(env) === 'production' ? 'https://api.paddle.com' : 'https://sandbox-api.paddle.com';
+  return fetch(`${host}${path}`, {
+    method: body === undefined ? 'GET' : 'POST',
+    headers: { authorization: `Bearer ${env.PADDLE_API_KEY}`, 'content-type': 'application/json' },
+    body: body === undefined ? undefined : JSON.stringify(body),
   });
 }
 

@@ -1,5 +1,5 @@
 # Cloudflare Pages: the static site in dist/ plus the account API in functions/.
-# Secrets (never in this file): GOOGLE_CLIENT_SECRET, LS_API_KEY, LS_WEBHOOK_SECRET.
+# Secrets (never in this file): GOOGLE_CLIENT_SECRET, PADDLE_API_KEY, PADDLE_WEBHOOK_SECRET.
 #   npx wrangler pages secret put <NAME> --project-name orilos
 name = "orilos"
 pages_build_output_dir = "dist"
@@ -13,8 +13,10 @@ migrations_dir = "migrations"
 
 [vars]
 GOOGLE_CLIENT_ID = "260389162338-mjr340f21kjno8ch1b6tqe17oulq62ld.apps.googleusercontent.com"
-LS_STORE_ID = ""
-LS_VARIANT_PRO_MONTHLY = ""
-LS_VARIANT_PRO_YEARLY = ""
-LS_VARIANT_TEAM_MONTHLY = ""
-LS_VARIANT_TEAM_YEARLY = ""
+# Paddle: "sandbox" while testing, "production" when live. The client token and price IDs are public.
+PADDLE_ENV = "sandbox"
+PADDLE_CLIENT_TOKEN = ""
+PADDLE_PRICE_PRO_MONTHLY = ""
+PADDLE_PRICE_PRO_YEARLY = ""
+PADDLE_PRICE_TEAM_MONTHLY = ""
+PADDLE_PRICE_TEAM_YEARLY = ""

@@ -70,5 +70,5 @@ export const KEY_LIMITS: Record<PlanId, number> = { free: 1, pro: 3, team: 15 };
 /** The caption styles on Free; the ORILOS app's Free list must match. */
 export const FREE_STYLES = new Set(['bold', 'hormozi', 'clean', 'pill', 'boxed', 'karaoke', 'neon', 'minimal', 'subtitle', 'oneword', 'comic', 'orilos']);
 
-/** A subscription in these states still has its plan (cancelled runs until the period ends). */
-export const LIVE_STATUSES = new Set(['active', 'on_trial', 'past_due', 'cancelled']);
+/** Paddle subscription states that keep the plan. A cancellation stays "active" until the paid period ends, then "canceled". */
+export const LIVE_STATUSES = new Set(['active', 'trialing', 'past_due']);

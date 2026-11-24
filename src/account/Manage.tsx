@@ -2,7 +2,8 @@
 import { Check } from 'lucide-react';
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { ago, api, device, getMe, when, type LicenceKey, type Me, type Session } from './api';
-import { KEY_LIMITS, plan as planOf, PLANS, type Interval, type PlanId } from './plans';
+import { loadPaddle } from './paddle';
+import { KEY_LIMITS, LIVE_STATUSES, plan as planOf, PLANS, type Interval, type PlanId } from './plans';
 import { Avatar, Card, CopyLine, Head, useKeys, type Ctx } from './ui';
 
 /* ── Profile ───────────────────────────────────────────────── */
@@ -106,12 +107,10 @@ export function Profile({ me, setMe }: Ctx) {
 
 const STATUS: Record<string, string> = {
   active: 'Active',
-  on_trial: 'Trial',
+  trialing: 'Trial',
   past_due: 'Payment failed: update your card',
-  cancelled: 'Cancelled: runs until the end of the period',
-  expired: 'Expired',
-  unpaid: 'Unpaid',
   paused: 'Paused',
+  canceled: 'Ended',
 };
 
 export function Billing({ me, setMe, billingReady }: Ctx) {
@@ -141,8 +140,21 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
     setBusy(planId ?? what);
     setError('');
     try {
-      const r = await api<{ url: string }>(`/billing/${what}`, { method: 'POST', body: what === 'checkout' ? { plan: planId, interval } : {} });
-      location.href = r.url;
+      if (what === 'portal') {
+        location.href = (await api<{ url: string }>('/billing/portal', { method: 'POST' })).url;
+        return;
+      }
+      const r = await api<{ transactionId: string; email: string | null; token: string; environment: string }>('/billing/checkout', {
+        method: 'POST',
+        body: { plan: planId, interval },
+      });
+      const paddle = await loadPaddle(r.token, r.environment);
+      paddle.Checkout.open({
+        transactionId: r.transactionId,
+        ...(r.email ? { customer: { email: r.email } } : {}),
+        settings: { displayMode: 'overlay', successUrl: `${location.origin}/account/billing?paid=1` },
+      });
+      setBusy('');
     } catch (e) {
       setError((e as Error).message);
       setBusy('');
@@ -173,7 +185,7 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
           </p>
           <p className="ac-fine">
             {sub
-              ? `${STATUS[sub.status] ?? sub.status}${sub.renewsAt && sub.status !== 'cancelled' ? ` · renews ${when(sub.renewsAt, me.timezone)}` : ''}${sub.endsAt ? ` · ends ${when(sub.endsAt, me.timezone)}` : ''}`
+              ? `${STATUS[sub.status] ?? sub.status}${sub.renewsAt && !sub.endsAt ? ` · renews ${when(sub.renewsAt, me.timezone)}` : ''}${sub.endsAt ? ` · ends ${when(sub.endsAt, me.timezone)}` : ''}`
               : 'Free forever. No card on file.'}
           </p>
         </div>
@@ -184,7 +196,7 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
         )}
       </Card>
 
-      {!sub || !['active', 'on_trial', 'past_due', 'cancelled'].includes(sub.status) ? (
+      {!sub || !LIVE_STATUSES.has(sub.status ?? '') ? (
         <>
           <div className="ac-row">
             <h2 className="ac-h3">Upgrade</h2>
@@ -220,7 +232,7 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
             ))}
           </div>
           <p className="ac-fine">
-            Secure checkout by Lemon Squeezy. Cancel any time. <a href="/pricing">Compare plans</a>
+            Secure checkout by Paddle: cards, PayPal, Apple Pay, Google Pay and UPI in India. Cancel any time. <a href="/pricing">Compare plans</a>
           </p>
         </>
       ) : (

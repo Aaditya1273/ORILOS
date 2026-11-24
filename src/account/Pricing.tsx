@@ -2,6 +2,7 @@ import { Check } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { maybeMe, type Me } from './api';
 import { TopBar } from './Chrome';
+import { openPaymentLink } from './paddle';
 import { PLANS, type Interval, type Plan } from './plans';
 import './account.css';
 
@@ -10,7 +11,7 @@ const FAQ: [string, string][] = [
   ['Is Free really free?', 'Yes. Unlimited clips on your own computer, no watermark, no credit card. Pro adds the tools creators use every day.'],
   ['Why is it this cheap?', 'Your computer does the rendering, so we pay for no servers per clip. Cloud clippers have to charge for every minute you upload.'],
   ['Can I cancel any time?', 'Yes, in one click from Billing. You keep your plan until the end of the period you paid for.'],
-  ['How do I pay?', 'Card or PayPal, through Lemon Squeezy, our payment partner. They also handle your sales tax or VAT and invoices.'],
+  ['How do I pay?', 'By card, PayPal, Apple Pay, Google Pay or UPI in India, through Paddle, our payment partner and merchant of record. Paddle also handles your sales tax, VAT or GST and your invoices.'],
   ['Do my videos go to your servers?', 'No. Videos, clips and your platform keys never leave your computer. Your account only holds your email, plan and licence keys.'],
 ];
 
@@ -29,6 +30,7 @@ export function Pricing() {
   const [me, setMe] = useState<Me | null>(null);
   useEffect(() => {
     void maybeMe().then(setMe);
+    void openPaymentLink().catch(() => {}); // Paddle's emailed links land here with ?_ptxn=
   }, []);
 
   return (
