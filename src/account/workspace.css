@@ -1561,3 +1561,34 @@
 .ac-dialog .ac-btn.danger:disabled {
   opacity: 0.4;
 }
+
+/* Upgrade cards: the full feature list, equal heights, buttons lined up at the bottom */
+.ac-upgrades {
+  align-items: stretch;
+}
+.ws .ac-card.ac-up {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 28px;
+}
+.ac-up-tag {
+  margin: -6px 0 0;
+  font-size: 15px;
+}
+.ac-up .ac-feats {
+  flex: 1;
+  margin: 10px 0 8px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  gap: 13px;
+  align-content: start;
+}
+.ac-up .ac-btn.wide {
+  margin-top: auto;
+}
+@media (max-width: 760px) {
+  .ac-upgrades {
+    grid-template-columns: 1fr;
+  }
+}

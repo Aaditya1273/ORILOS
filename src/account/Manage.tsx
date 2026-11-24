@@ -266,13 +266,14 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
               <Card key={p.id} className={`ac-up${wanted === p.id || (!wanted && p.id === 'pro') ? ' hot ac-shine' : ''}`}>
                 {p.id === 'pro' && <span className="ac-badge">Most popular</span>}
                 <h2>{p.name}</h2>
+                <p className="ac-mute ac-up-tag">{p.tagline}</p>
                 <p className="ac-price">
                   <b>${p.price[interval]}</b>
                   <span>/ month</span>
                 </p>
                 <YearlyLine p={p} interval={interval} />
                 <ul className="ac-feats">
-                  {p.features.slice(1, 5).map((f) => (
+                  {p.features.map((f) => (
                     <li key={f}>
                       <Check size={16} aria-hidden="true" />
                       {f}
