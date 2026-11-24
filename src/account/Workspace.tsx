@@ -502,7 +502,7 @@ export function Styles({ me }: Ctx) {
 /* ── Voices ────────────────────────────────────────────────── */
 
 // The flag most people link with each voice language (flag-icons, MIT, in public/flags). Kurdish has no single country, so it keeps its code.
-const FLAG: Record<string, string> = {sq: 'al', ar: 'sa', hy: 'am', eu: 'es-pv', bn: 'bd', bg: 'bg', ca: 'es-ct', zh: 'cn', cs: 'cz', da: 'dk', nl: 'nl', en: 'us', et: 'ee', fa: 'ir', fi: 'fi', fr: 'fr', ka: 'ge', de: 'de', el: 'gr', he: 'il', hi: 'in', hu: 'hu', is: 'is', id: 'id', it: 'it', ja: 'jp', kk: 'kz', ko: 'kr', lv: 'lv', lt: 'lt', lb: 'lu', ml: 'in', mr: 'in', ne: 'np', no: 'no', pl: 'pl', pt: 'pt', ro: 'ro', ru: 'ru', sr: 'rs', sk: 'sk', sl: 'si', es: 'es', sw: 'tz', sv: 'se', te: 'in', th: 'th', tr: 'tr', uk: 'ua', ur: 'pk', vi: 'vn', cy: 'gb-wls'};
+const FLAG: Record<string, string> = {sq: 'al', ar: 'sa', hy: 'am', eu: 'es-pv', bn: 'bd', bg: 'bg', ca: 'es-ct', zh: 'cn', cs: 'cz', da: 'dk', nl: 'nl', en: 'us', et: 'ee', fa: 'ir', fi: 'fi', fr: 'fr', ka: 'ge', de: 'de', el: 'gr', he: 'il', hi: 'in', hu: 'hu', is: 'is', id: 'id', it: 'it', ja: 'jp', kk: 'kz', ko: 'kr', lv: 'lv', lt: 'lt', lb: 'lu', ml: 'in', mr: 'in', ne: 'np', no: 'no', pl: 'pl', pt: 'pt', ro: 'ro', ru: 'ru', sr: 'rs', sk: 'sk', sl: 'si', es: 'es', sw: 'tz', sv: 'se', te: 'in', th: 'th', tr: 'tr', uk: 'ua', vi: 'vn', cy: 'gb-wls'};
 
 export function Voices(_: Ctx) {
   const [q, setQ] = useState('');

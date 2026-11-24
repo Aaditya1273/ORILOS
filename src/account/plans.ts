@@ -40,7 +40,7 @@ export const PLANS: Plan[] = [
       'Brand kit: your logo, colours and font',
       'Best-time scheduling and the Studio calendar',
       'Autopilot on 3 Twitch, Kick or YouTube channels',
-      'Spoken hooks and voiceovers in 53 languages',
+      'Spoken hooks and voiceovers in 52 languages',
       'Use it on 3 computers',
       'Priority support',
     ],

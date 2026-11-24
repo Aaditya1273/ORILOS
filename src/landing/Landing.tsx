@@ -19,7 +19,7 @@ const UV = {
 const NUMBERS: [string, string][] = [
   ["$0", "No minutes, no credits"],
   ["67", "Caption looks"],
-  ["53", "Voice languages"],
+  ["52", "Voice languages"],
   ["9", "Platforms"],
   ["21", "Tools for your AI"],
 ];
