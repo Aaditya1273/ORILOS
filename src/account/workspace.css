@@ -1175,10 +1175,10 @@
 }
 .ws-heat-row {
   display: grid;
-  grid-template-columns: 130px repeat(24, minmax(16px, 1fr));
-  gap: 3px;
+  grid-template-columns: 130px repeat(24, minmax(14px, 30px));
+  gap: 4px;
   align-items: center;
-  min-width: 620px;
+  min-width: 560px;
 }
 .ws-heat-row > span[role='rowheader'] {
   display: grid;
@@ -1191,8 +1191,8 @@
   font-size: 12px;
 }
 .ws-heat-row > span[role='cell'] {
-  height: 26px;
-  border-radius: 5px;
+  aspect-ratio: 1;
+  border-radius: 22%;
   background: var(--surface-2);
 }
 .ws-heat-row > span.best {
