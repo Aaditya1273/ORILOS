@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { maybeMe, type Me } from './api';
 import { TopBar } from './Chrome';
 import { openPaymentLink } from './paddle';
+import { YearlyLine } from './YearlyLine';
 import { PLANS, type Interval, type Plan } from './plans';
 import './account.css';
 
@@ -59,7 +60,7 @@ export function Pricing() {
           {PLANS.map((p) => {
             const current = me?.plan === p.id;
             return (
-              <section key={p.id} className={`ac-plan${p.id === 'pro' ? ' hot' : ''}`} aria-labelledby={`plan-${p.id}`}>
+              <section key={p.id} className={`ac-plan${p.id === 'pro' ? ' hot ac-shine' : ''}`} aria-labelledby={`plan-${p.id}`}>
                 {p.id === 'pro' && <span className="ac-badge">Most popular</span>}
                 <h2 id={`plan-${p.id}`}>{p.name}</h2>
                 <p className="ac-mute">{p.tagline}</p>
@@ -67,7 +68,7 @@ export function Pricing() {
                   <b>${price(p, interval)}</b>
                   <span>{p.id === 'free' ? 'forever' : '/ month'}</span>
                 </p>
-                <p className="ac-fine">{p.id === 'free' ? 'No card needed' : interval === 'yearly' ? `$${p.price.yearly * 12} billed yearly` : 'Billed monthly'}</p>
+                <YearlyLine p={p} interval={interval} />
                 {current ? (
                   <span className="ac-btn ghost wide" aria-disabled="true">
                     Your plan

@@ -1020,3 +1020,69 @@ html:has(.ac) body {
 :root[data-theme='light'] .ac ::selection {
   color: #fff;
 }
+
+/* ── The recommended plan: a soft border with a slow shine travelling around it (dark theme) ── */
+@property --shine {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.ac-up {
+  position: relative;
+}
+:root:not([data-theme='light']) .ac-shine {
+  border-color: transparent !important;
+  box-shadow: 0 0 48px -18px color-mix(in srgb, var(--o-pink) 45%, transparent) !important;
+}
+:root:not([data-theme='light']) .ac-shine::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--shine),
+    color-mix(in srgb, var(--o-pink) 30%, transparent) 0deg,
+    color-mix(in srgb, var(--o-pink) 30%, transparent) 250deg,
+    color-mix(in srgb, var(--o-pink) 85%, #fff) 310deg,
+    #ffe3f0 325deg,
+    color-mix(in srgb, var(--o-pink) 85%, #fff) 340deg,
+    color-mix(in srgb, var(--o-pink) 30%, transparent) 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: ac-shine 6s linear infinite;
+  pointer-events: none;
+}
+@keyframes ac-shine {
+  to {
+    --shine: 360deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-theme='light']) .ac-shine::before {
+    animation: none;
+  }
+}
+.ac-up .ac-badge {
+  border-radius: var(--o-pill);
+  font-family: var(--o-body);
+  letter-spacing: 0.04em;
+}
+.ac-yearly s {
+  margin-right: 4px;
+  color: var(--o-mute);
+}
+.ac-save-chip {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: var(--o-pill);
+  background: color-mix(in srgb, #22c55e 16%, transparent);
+  color: #4ade80;
+  font: 600 12px/1.4 var(--o-body);
+}
+:root[data-theme='light'] .ac-save-chip {
+  color: #15803d;
+}

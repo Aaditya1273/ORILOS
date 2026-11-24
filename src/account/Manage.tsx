@@ -3,6 +3,7 @@ import { Check, KeyRound, TriangleAlert, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { ago, api, device, getMe, when, type LicenceKey, type Me, type Session } from './api';
 import { loadPaddle } from './paddle';
+import { YearlyLine } from './YearlyLine';
 import { KEY_LIMITS, LIVE_STATUSES, plan as planOf, PLANS, type Interval, type PlanId } from './plans';
 import { Avatar, Card, CopyLine, Head, useKeys, type Ctx } from './ui';
 
@@ -262,13 +263,14 @@ export function Billing({ me, setMe, billingReady }: Ctx) {
           </div>
           <div className="ac-upgrades">
             {PLANS.filter((p) => p.id !== 'free').map((p) => (
-              <Card key={p.id} className={`ac-up${wanted === p.id || (!wanted && p.id === 'pro') ? ' hot' : ''}`}>
+              <Card key={p.id} className={`ac-up${wanted === p.id || (!wanted && p.id === 'pro') ? ' hot ac-shine' : ''}`}>
+                {p.id === 'pro' && <span className="ac-badge">Most popular</span>}
                 <h2>{p.name}</h2>
                 <p className="ac-price">
                   <b>${p.price[interval]}</b>
                   <span>/ month</span>
                 </p>
-                <p className="ac-fine">{interval === 'yearly' ? `$${p.price.yearly * 12} billed yearly` : 'Billed monthly'}</p>
+                <YearlyLine p={p} interval={interval} />
                 <ul className="ac-feats">
                   {p.features.slice(1, 5).map((f) => (
                     <li key={f}>
