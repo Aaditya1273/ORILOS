@@ -2136,7 +2136,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 240px;
+  min-height: 280px;
   margin: 0 0 36px;
   border: 1px solid var(--border);
   border-radius: var(--o-r-xl);
@@ -2154,10 +2154,10 @@
 .ws-gta-banner img {
   position: absolute;
   inset: 0 0 0 auto;
-  width: 64%;
+  width: 60%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 0%; /* keep faces: the art's heads are at the top */
+  object-position: 50% var(--gta-y, 12%); /* trim the sky, keep both heads, show more of the figures */
   z-index: -2;
 }
 .ws-gta-banner::before {
@@ -2280,4 +2280,11 @@
   background: var(--o-pink) !important;
   border-color: var(--o-pink) !important;
   color: #fff !important;
+}
+
+/* Very wide screens crop the art more: a gentler shift keeps his head in frame */
+@media (min-width: 1700px) {
+  .ws-gta-banner {
+    --gta-y: 4%;
+  }
 }
