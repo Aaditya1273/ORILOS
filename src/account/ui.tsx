@@ -47,7 +47,7 @@ export function switchTheme(next: Theme, x: number, y: number, commit: () => voi
         { duration: 720, easing: ease, pseudoElement: '::view-transition-new(root)' },
       );
       document.documentElement.animate(
-        { transform: ['scale(1)', 'scale(0.985)'], filter: ['brightness(1)', 'brightness(0.75)'] },
+        { filter: ['brightness(1)', 'brightness(0.8)'] }, // dim only: scaling it would leak the new theme at the edges
         { duration: 720, easing: ease, pseudoElement: '::view-transition-old(root)' },
       );
     })
