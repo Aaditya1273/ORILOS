@@ -2157,7 +2157,7 @@
   width: 60%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% var(--gta-y, 12%); /* trim the sky, keep both heads, show more of the figures */
+  object-position: 50% var(--gta-y, 18%); /* trim the sky, keep both heads, show more of the figures */
   z-index: -2;
 }
 .ws-gta-banner::before {
@@ -2285,6 +2285,6 @@
 /* Very wide screens crop the art more: a gentler shift keeps his head in frame */
 @media (min-width: 1700px) {
   .ws-gta-banner {
-    --gta-y: 4%;
+    --gta-y: 10%;
   }
 }
