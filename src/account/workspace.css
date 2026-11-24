@@ -2288,3 +2288,15 @@
     --gta-y: 10%;
   }
 }
+/* The banner sits on its own dark art in both themes, so its button ignores the light theme's button colours */
+:root .ws .ws-gta-banner .ws-gta-banner-btn {
+  background: #fff !important;
+  border-color: #fff !important;
+  color: #000 !important;
+}
+:root .ws .ws-gta-banner:hover .ws-gta-banner-btn,
+:root .ws .ws-gta-banner:focus-visible .ws-gta-banner-btn {
+  background: var(--o-pink) !important;
+  border-color: var(--o-pink) !important;
+  color: #fff !important;
+}

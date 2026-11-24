@@ -1,6 +1,7 @@
 // Building blocks shared by every account page.
 import { Check, Copy } from 'lucide-react';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { flushSync } from 'react-dom';
 import { api, type LicenceKey, type Me } from './api';
 import { plan as planOf } from './plans';
 
@@ -26,6 +27,34 @@ export function applyTheme(theme: Theme) {
     /* private mode: the choice lasts this visit */
   }
 }
+/** Switches theme with a circle that grows from (x, y) and sweeps the new theme across the screen
+ *  (View Transitions). Instant when the browser lacks them or the person prefers reduced motion. */
+export function switchTheme(next: Theme, x: number, y: number, commit: () => void) {
+  const doc = document as Document & { startViewTransition?: (cb: () => void) => { ready: Promise<void> } };
+  const apply = () => {
+    applyTheme(next);
+    flushSync(commit); // the icon must already be the new one in the "after" snapshot
+  };
+  if (!doc.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return apply();
+  const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+  document.documentElement.classList.add('theme-switching');
+  const t = doc.startViewTransition(apply);
+  t.ready
+    .then(() => {
+      const ease = 'cubic-bezier(0.7, 0, 0.2, 1)';
+      document.documentElement.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
+        { duration: 720, easing: ease, pseudoElement: '::view-transition-new(root)' },
+      );
+      document.documentElement.animate(
+        { transform: ['scale(1)', 'scale(0.985)'], filter: ['brightness(1)', 'brightness(0.75)'] },
+        { duration: 720, easing: ease, pseudoElement: '::view-transition-old(root)' },
+      );
+    })
+    .catch(() => {})
+    .finally(() => setTimeout(() => document.documentElement.classList.remove('theme-switching'), 760));
+}
+
 export interface Ctx {
   me: Me;
   setMe: (m: Me) => void;

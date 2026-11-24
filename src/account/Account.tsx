@@ -28,7 +28,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { api, ApiError, getMe, type Me } from './api';
 import { ClaudeConnect } from './Connect';
 import { Billing, Keys, Profile, Settings } from './Manage';
-import { applyTheme, Avatar, Center, PlanChip, savedTheme, type Ctx, type Go, type Theme } from './ui';
+import { Avatar, Center, PlanChip, savedTheme, switchTheme, type Ctx, type Go, type Theme } from './ui';
 import { Autopilot, Create, GtaHub, Home, Schedule, Styles, Voices } from './Workspace';
 import './account.css';
 import './workspace.css';
@@ -123,10 +123,10 @@ export function Account() {
   const [slim, setSlim] = useState(initialSlim);
   const [drawer, setDrawer] = useState(false);
   const [theme, setTheme] = useState<Theme>(savedTheme);
-  const flipTheme = () => {
+  const flipTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
     const next = theme === 'light' ? 'dark' : 'light';
-    applyTheme(next);
-    setTheme(next);
+    const box = e.currentTarget.getBoundingClientRect();
+    switchTheme(next, box.left + box.width / 2, box.top + box.height / 2, () => setTheme(next));
   };
 
   useEffect(() => {
@@ -216,7 +216,7 @@ export function Account() {
             aria-label={theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}
             aria-pressed={theme === 'light'}
           >
-            {theme === 'light' ? <Moon size={20} aria-hidden="true" /> : <Sun size={20} aria-hidden="true" />}
+            {theme === 'light' ? <Moon key="moon" className="ws-theme-icon" size={20} aria-hidden="true" /> : <Sun key="sun" className="ws-theme-icon" size={20} aria-hidden="true" />}
             <span className="ws-label">{theme === 'light' ? 'Dark theme' : 'Light theme'}</span>
           </button>
         </div>
