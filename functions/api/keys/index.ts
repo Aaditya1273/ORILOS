@@ -15,14 +15,15 @@ export const onRequestPost: Fn = async ({ request, env }) => {
   const s = await session(env, request);
   if (!s) return fail(401, 'signed_out', 'Sign in to continue.');
   const name = String((await readJson<{ name: string }>(request)).name ?? '').trim().slice(0, 40) || 'My computer';
-  const count = await env.DB.prepare('SELECT COUNT(*) AS n FROM licence_keys WHERE user_id = ? AND revoked_at IS NULL').bind(s.user.id).first<number>('n');
   const max = KEY_LIMITS[publicUser(s.user).plan];
-  if ((count ?? 0) >= max)
-    return fail(409, 'too_many_keys', `Your plan includes ${max} ${max === 1 ? 'computer' : 'computers'}. Revoke a key you no longer use, or upgrade for more.`);
   const key = `orl_${randomToken(32)}`;
   const row = { id: `k_${randomToken(9)}`, name, prefix: key.slice(0, 12), createdAt: now(), usedAt: null, device: '' };
-  await env.DB.prepare('INSERT INTO licence_keys (id, user_id, name, prefix, hash, created_at) VALUES (?, ?, ?, ?, ?, ?)')
-    .bind(row.id, s.user.id, row.name, row.prefix, await sha256hex(key), row.createdAt)
-    .run();
+  // The limit is checked inside the insert, so two clicks at once cannot both get past it.
+  const added = await env.DB.prepare(
+    `INSERT INTO licence_keys (id, user_id, name, prefix, hash, created_at) SELECT ?, ?, ?, ?, ?, ?
+     WHERE (SELECT COUNT(*) FROM licence_keys WHERE user_id = ? AND revoked_at IS NULL) < ?`,
+  ).bind(row.id, s.user.id, row.name, row.prefix, await sha256hex(key), row.createdAt, s.user.id, max).run();
+  if (!added.meta.changes)
+    return fail(409, 'too_many_keys', `Your plan includes ${max} ${max === 1 ? 'computer' : 'computers'}. Revoke a key you no longer use, or upgrade for more.`);
   return json({ key, ...row }, 201);
 };

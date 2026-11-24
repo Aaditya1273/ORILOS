@@ -1,5 +1,4 @@
-import { LIVE_STATUSES } from '../../src/account/plans';
-import { billingReady, cookie, fail, hint, json, publicUser, readJson, session, SESSION_COOKIE, type Fn } from '../_lib';
+import { bridgeFor, billingReady, cookie, fail, hint, json, publicUser, readJson, session, SESSION_COOKIE, type Fn } from '../_lib';
 
 export const onRequestGet: Fn = async ({ request, env }) => {
   const s = await session(env, request);
@@ -48,8 +47,9 @@ export const onRequestPatch: Fn = async ({ request, env }) => {
 export const onRequestDelete: Fn = async ({ request, env }) => {
   const s = await session(env, request);
   if (!s) return fail(401, 'signed_out', 'Sign in to continue.');
-  if (s.user.sub_id && LIVE_STATUSES.has(s.user.sub_status ?? '') && s.user.sub_status !== 'cancelled')
-    return fail(409, 'cancel_first', 'Cancel your subscription in Billing first, then delete your account.');
+  // Anything but "canceled" (active, past due, paused, or cancelling at period end) can still bill.
+  if (s.user.sub_id && s.user.sub_status && s.user.sub_status !== 'canceled')
+    return fail(409, 'cancel_first', 'Your subscription is still running. Cancel it in Billing, or wait until it ends, then delete your account.');
   const id = s.user.id;
   await env.DB.batch([
     env.DB.prepare('DELETE FROM licence_keys WHERE user_id = ?').bind(id),
@@ -58,6 +58,7 @@ export const onRequestDelete: Fn = async ({ request, env }) => {
     env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(id),
     env.DB.prepare('DELETE FROM users WHERE id = ?').bind(id),
   ]);
+  await bridgeFor(env, id).fetch('https://bridge/close', { method: 'POST' }).catch((e) => console.error('bridge close', e));
   const headers = new Headers({ 'set-cookie': cookie(SESSION_COOKIE, '', 0) });
   headers.append('set-cookie', hint(false));
   return json({ ok: true }, 200, headers);

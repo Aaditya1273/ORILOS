@@ -12,7 +12,9 @@ interface GoogleUser {
 export const onRequestGet: Fn = async ({ request, env }) => {
   const url = new URL(request.url);
   const back = (error: string) => Response.redirect(`${url.origin}/signin?error=${error}`, 302);
-  const [state, verifier, next] = (readCookie(request, OAUTH_COOKIE) ?? '').split('.');
+  // state.verifier.next, where next (URL-encoded) can itself contain dots, e.g. a consent URL with https://claude.ai
+  const [state, verifier, ...rest] = (readCookie(request, OAUTH_COOKIE) ?? '').split('.');
+  const next = rest.join('.');
   if (url.searchParams.get('error')) return back('cancelled');
   const code = url.searchParams.get('code');
   if (!code || !state || !verifier || url.searchParams.get('state') !== state) return back('expired');

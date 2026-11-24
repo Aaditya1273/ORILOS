@@ -36,10 +36,10 @@ export const onRequestPost: Fn = async ({ request, env }) => {
   const clientId = p.get('client_id') ?? '';
   if (p.get('grant_type') === 'authorization_code') {
     const hash = await sha256hex(p.get('code') ?? '');
-    const row = await env.DB.prepare('SELECT * FROM oauth_codes WHERE hash = ?')
+    // Read and delete in one statement: single use, even when it fails or two requests race.
+    const row = await env.DB.prepare('DELETE FROM oauth_codes WHERE hash = ? RETURNING client_id, user_id, redirect_uri, code_challenge, expires_at')
       .bind(hash)
       .first<{ client_id: string; user_id: string; redirect_uri: string; code_challenge: string; expires_at: number }>();
-    await env.DB.prepare('DELETE FROM oauth_codes WHERE hash = ?').bind(hash).run(); // single use, even when it fails
     if (!row || row.expires_at < now()) return bad('invalid_grant', 'The sign-in code expired. Try connecting again.');
     if (row.client_id !== clientId || row.redirect_uri !== p.get('redirect_uri')) return bad('invalid_grant', 'This code belongs to another app.');
     if (b64url(await sha256(p.get('code_verifier') ?? '')) !== row.code_challenge) return bad('invalid_grant', 'PKCE check failed.');

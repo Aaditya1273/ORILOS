@@ -8,20 +8,32 @@ const TIMEOUT_MS = 280_000; // claude.ai gives a tool call about five minutes; c
 export class Bridge extends DurableObject {
   private pending = new Map<string, (v: unknown) => void>();
 
+  /** The connected computer, skipping sockets closed by a revoke or a newer connection. */
+  private open(): WebSocket | undefined {
+    return this.ctx.getWebSockets().find((w) => w.readyState === WebSocket.OPEN);
+  }
+
   async fetch(request: Request): Promise<Response> {
     const path = new URL(request.url).pathname;
     if (request.headers.get('upgrade') === 'websocket') {
       for (const old of this.ctx.getWebSockets()) old.close(4000, 'Another computer connected.');
       const [client, server] = Object.values(new WebSocketPair());
-      this.ctx.acceptWebSocket(server);
+      this.ctx.acceptWebSocket(server, [request.headers.get('x-orilos-key') ?? 'key']);
       return new Response(null, { status: 101, webSocket: client });
     }
     if (path === '/status') {
       const hello = (await this.ctx.storage.get<Record<string, unknown>>('hello')) ?? null;
-      return Response.json({ online: this.ctx.getWebSockets().length > 0, hello });
+      return Response.json({ online: !!this.open(), hello });
+    }
+    if (path === '/close' && request.method === 'POST') {
+      // A key was revoked (close its socket) or the account was deleted (close all and forget the tool list).
+      const key = new URL(request.url).searchParams.get('key');
+      for (const ws of key ? this.ctx.getWebSockets(key) : this.ctx.getWebSockets()) ws.close(4001, 'This licence key was revoked.');
+      if (!key) await this.ctx.storage.deleteAll();
+      return Response.json({ ok: true });
     }
     if (path === '/rpc' && request.method === 'POST') {
-      const ws = this.ctx.getWebSockets()[0];
+      const ws = this.open();
       if (!ws) return Response.json({ offline: true });
       const id = crypto.randomUUID();
       const answer = new Promise((resolve) => {

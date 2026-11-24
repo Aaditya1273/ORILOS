@@ -28,7 +28,8 @@ export const onRequestPost: Fn = async ({ request, env }) => {
   const userId = sub.custom_data?.user_id;
   await env.DB.prepare(
     `UPDATE users SET plan = ?, sub_id = ?, sub_status = ?, sub_interval = ?, sub_renews_at = ?, sub_ends_at = ?, customer_id = ?, sub_event_at = ?
-     WHERE ${userId ? 'id = ?' : 'sub_id = ?'} AND (sub_event_at IS NULL OR sub_event_at <= ?)`,
-  ).bind(mapped.plan, sub.id, sub.status, mapped.interval, toEpoch(sub.next_billed_at), toEpoch(ends), sub.customer_id, sub.updated_at, userId ?? sub.id, sub.updated_at).run();
+     WHERE ${userId ? 'id = ?' : 'sub_id = ?'} AND (sub_event_at IS NULL OR sub_event_at <= ? OR sub_id IS NOT ?)
+       AND (sub_id IS NULL OR sub_id = ? OR sub_status IS NULL OR sub_status NOT IN ('active', 'trialing', 'past_due'))`,
+  ).bind(mapped.plan, sub.id, sub.status, mapped.interval, toEpoch(sub.next_billed_at), toEpoch(ends), sub.customer_id, sub.updated_at, userId ?? sub.id, sub.updated_at, sub.id, sub.id).run();
   return json({ ok: true });
 };
