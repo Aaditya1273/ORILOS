@@ -246,6 +246,30 @@ export const PAGES: Page[] = [
     ],
   },
   {
+    slug: 'claude-web',
+    title: 'Use ORILOS in claude.ai',
+    group: G.start,
+    description: 'Clip from Claude on the web or your phone with ORILOS Connect. The work still happens on your computer.',
+    blocks: [
+      { p: 'The claude.ai website and the Claude phone app can only reach MCP servers on the internet, and ORILOS runs on your own computer. ORILOS Connect links the two: your computer keeps one secure connection to ORILOS, and Claude reaches it through your ORILOS account. Videos, clips and your platform keys never leave your computer; only Claude\'s requests and ORILOS\'s answers travel.' },
+      { h2: 'Set it up' },
+      { ol: [
+        'Make a licence key at [Keys](/account/keys) and run `uvx orilos-mcp activate <your key>` on your computer (once).',
+        'Run `uvx orilos-mcp connect` and keep that window open.',
+        'In Claude: Settings, Connectors, Add custom connector. Name it ORILOS and use the address `https://orilos.pages.dev/mcp`.',
+        'Click Connect, sign in to ORILOS and press Allow. Then ask Claude to clip a link.',
+      ] },
+      { callout: 'Claude\'s Free plan allows one custom connector; paid plans allow more. Claude Desktop, Claude Code, Codex and Cursor don\'t need Connect: `uvx orilos-mcp install` connects them directly.', kind: 'tip' },
+      { h2: 'Good to know' },
+      { ul: [
+        'Your computer has to be on with ORILOS Connect open while Claude works. If it is off, Claude says so and tells you how to start it.',
+        'Clips are saved on your computer, so file and Studio links open there.',
+        'Only one computer is linked at a time: starting Connect on another one takes over.',
+        'Disconnect Claude any time in [Settings](/account/settings), Connected apps.',
+      ] },
+    ],
+  },
+  {
     slug: 'account',
     title: 'Account and licence keys',
     group: G.start,

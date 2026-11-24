@@ -10,6 +10,7 @@ import {
   LogOut,
   Menu,
   Mic,
+  Plug,
   Moon,
   PanelLeftClose,
   PanelLeftOpen,
@@ -24,6 +25,7 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { api, ApiError, getMe, type Me } from './api';
+import { ClaudeConnect } from './Connect';
 import { Billing, Keys, Profile, Settings } from './Manage';
 import { applyTheme, Avatar, Center, PlanChip, savedTheme, type Ctx, type Go, type Theme } from './ui';
 import { Autopilot, Create, Home, Schedule, Styles, Voices } from './Workspace';
@@ -38,7 +40,13 @@ interface Tab {
 }
 
 const GROUPS: { label: string; tabs: Tab[] }[] = [
-  { label: '', tabs: [{ path: '/account', label: 'Home', icon: HomeIcon, page: Home }] },
+  {
+    label: '',
+    tabs: [
+      { path: '/account', label: 'Home', icon: HomeIcon, page: Home },
+      { path: '/account/claude', label: 'Use in Claude', icon: Plug, page: ClaudeConnect },
+    ],
+  },
   {
     label: 'Create',
     tabs: [

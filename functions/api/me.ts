@@ -53,6 +53,8 @@ export const onRequestDelete: Fn = async ({ request, env }) => {
   const id = s.user.id;
   await env.DB.batch([
     env.DB.prepare('DELETE FROM licence_keys WHERE user_id = ?').bind(id),
+    env.DB.prepare('DELETE FROM oauth_tokens WHERE user_id = ?').bind(id),
+    env.DB.prepare('DELETE FROM oauth_codes WHERE user_id = ?').bind(id),
     env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(id),
     env.DB.prepare('DELETE FROM users WHERE id = ?').bind(id),
   ]);

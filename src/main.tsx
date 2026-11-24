@@ -20,13 +20,16 @@ if (path === '/app' || path.startsWith('/app/')) {
   // Ask the browser not to evict ORILOS's data under storage pressure.
   void navigator.storage?.persist?.();
   mount(<App />);
-} else if (path === '/signin' || path === '/pricing' || path === '/account' || path.startsWith('/account/')) {
+} else if (path === '/signin' || path === '/pricing' || path === '/oauth/consent' || path === '/account' || path.startsWith('/account/')) {
   // Sign-in, pricing and the workspace share a light/dark theme, applied before they draw.
   const { savedTheme } = await import('./account/ui');
   document.documentElement.dataset.theme = savedTheme();
   if (path === '/signin') {
     const { SignIn } = await import('./account/SignIn');
     mount(<SignIn />);
+  } else if (path === '/oauth/consent') {
+    const { Consent } = await import('./account/Consent');
+    mount(<Consent />);
   } else if (path === '/pricing') {
     const { Pricing } = await import('./account/Pricing');
     mount(<Pricing />);

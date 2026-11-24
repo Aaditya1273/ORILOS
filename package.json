@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && tsc -p functions && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -b && tsc -p functions",
+    "typecheck": "tsc -b && tsc -p functions && tsc -p bridge",
     "test": "vitest run"
   },
   "dependencies": {

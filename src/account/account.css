@@ -1111,3 +1111,55 @@ html:has(.ac) body {
     transform: none;
   }
 }
+
+/* ── ORILOS Connect sign-in (consent) ── */
+.ac-consent {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+}
+.ac-consent-card {
+  width: min(460px, 100%);
+  display: grid;
+  gap: 16px;
+  padding: 32px;
+  border: 1px solid var(--o-line);
+  border-radius: var(--o-r-xl);
+  background: var(--o-ink);
+}
+.ac-consent-card h1 {
+  margin: 8px 0 0;
+  font: 800 28px/1.15 var(--o-display);
+  letter-spacing: -0.02em;
+}
+.ac-consent-card .ac-mute b {
+  color: var(--fg);
+  font-weight: 600;
+}
+.ac-consent-list {
+  display: grid;
+  gap: 12px;
+  margin: 4px 0;
+  padding: 16px;
+  list-style: none;
+  border: 1px solid var(--o-line);
+  border-radius: var(--o-r);
+}
+.ac-consent-list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  color: var(--o-soft);
+  font-size: 15px;
+}
+.ac-consent-list svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--o-pink);
+}
+.ac-consent-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}

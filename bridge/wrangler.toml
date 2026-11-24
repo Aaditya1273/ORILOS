@@ -1,0 +1,13 @@
+# ORILOS Connect relay: one Durable Object per account holds the live link to that person's computer.
+# The website (Pages Functions) binds to it; this Worker serves nothing on its own.
+name = "orilos-bridge"
+main = "src/index.ts"
+compatibility_date = "2026-06-01"
+
+[[durable_objects.bindings]]
+name = "BRIDGE"
+class_name = "Bridge"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Bridge"]

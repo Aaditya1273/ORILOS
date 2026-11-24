@@ -4,6 +4,8 @@ export { safeNext } from '../src/account/next';
 
 export interface Env {
   DB: D1Database;
+  /** ORILOS Connect relay (bridge/): one Durable Object per account. */
+  BRIDGE: DurableObjectNamespace;
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET?: string;
   /** "sandbox" while testing, "production" when live. */
@@ -163,6 +165,60 @@ export async function paddle(env: Env, path: string, body?: unknown, method?: st
     body: body === undefined ? undefined : JSON.stringify(body),
   });
 }
+
+/* ── ORILOS Connect: OAuth 2.1 for MCP clients such as claude.ai ── */
+
+export const ACCESS_TTL = 3600;
+export const REFRESH_TTL = 30 * 86400;
+export const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'authorization, content-type, mcp-protocol-version', 'access-control-allow-methods': 'GET, POST, OPTIONS' };
+
+export interface OAuthClient {
+  id: string;
+  name: string;
+  redirect_uris: string;
+}
+
+/** https anywhere, plain http only on this computer (native apps). No fragments. */
+export function okRedirect(uri: string): boolean {
+  try {
+    const u = new URL(uri);
+    if (u.hash || uri.length > 500) return false;
+    return u.protocol === 'https:' || (u.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(u.hostname));
+  } catch {
+    return false;
+  }
+}
+
+export async function oauthClient(env: Env, id: string): Promise<(OAuthClient & { uris: string[] }) | null> {
+  const c = await env.DB.prepare('SELECT id, name, redirect_uris FROM oauth_clients WHERE id = ?').bind(id).first<OAuthClient>();
+  return c ? { ...c, uris: JSON.parse(c.redirect_uris) as string[] } : null;
+}
+
+/** The authorize request, checked the same way at /oauth/authorize and when the person approves it. */
+export async function checkAuthorize(env: Env, p: URLSearchParams): Promise<{ client: OAuthClient & { uris: string[] } } | { error: string }> {
+  const client = await oauthClient(env, p.get('client_id') ?? '');
+  if (!client) return { error: 'Unknown app. Remove the connector in Claude and add it again.' };
+  if (!client.uris.includes(p.get('redirect_uri') ?? '')) return { error: 'This app asked to return to an address it did not register.' };
+  if (p.get('response_type') !== 'code') return { error: 'Unsupported response_type.' };
+  if (p.get('code_challenge_method') !== 'S256' || !/^[A-Za-z0-9_-]{43,128}$/.test(p.get('code_challenge') ?? ''))
+    return { error: 'This app must use PKCE (S256).' };
+  if ((p.get('state') ?? '').length > 500) return { error: 'state is too long.' };
+  return { client };
+}
+
+/** The account behind an MCP request's bearer token, or null. */
+export async function bearerUser(env: Env, request: Request): Promise<string | null> {
+  const token = /^Bearer (ort_[A-Za-z0-9_-]{43})$/.exec(request.headers.get('authorization') ?? '')?.[1];
+  if (!token) return null;
+  const row = await env.DB.prepare('SELECT id, user_id, access_expires, used_at FROM oauth_tokens WHERE access_hash = ?')
+    .bind(await sha256hex(token))
+    .first<{ id: string; user_id: string; access_expires: number; used_at: number | null }>();
+  if (!row || row.access_expires < now()) return null;
+  if (!row.used_at || now() - row.used_at > 300) await env.DB.prepare('UPDATE oauth_tokens SET used_at = ? WHERE id = ?').bind(now(), row.id).run();
+  return row.user_id;
+}
+
+export const bridgeFor = (env: Env, userId: string) => env.BRIDGE.get(env.BRIDGE.idFromName(userId));
 
 export async function readJson<T>(request: Request): Promise<Partial<T>> {
   try {

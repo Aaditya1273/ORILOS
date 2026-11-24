@@ -1874,3 +1874,49 @@
 .ws-studio-row > div .ac-fine {
   margin: 4px 0 0;
 }
+
+/* ── Use in Claude ── */
+.ws .ac-card.ws-link-status {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.ws-link-status > div {
+  display: grid;
+  gap: 2px;
+}
+.ws-link-status b {
+  font-size: 16px;
+}
+.ws-link-status small {
+  color: var(--text-2);
+  font-size: 14px;
+}
+.ws-dot {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--text-3);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--text-3) 20%, transparent);
+}
+.ws-link-status.on .ws-dot {
+  background: #22c55e;
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.22);
+}
+.ws .ac-card.ws-link-status.on {
+  border-color: rgba(34, 197, 94, 0.45);
+}
+.ws-connect-steps li {
+  gap: 10px;
+}
+.ws-connect-steps .ac-fine {
+  margin: 0;
+}
+.ws-open-claude {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

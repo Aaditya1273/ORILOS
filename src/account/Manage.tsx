@@ -519,10 +519,17 @@ export function Settings({ me }: Ctx) {
   const [sessions, setSessions] = useState<Session[] | null>(null);
   const [typed, setTyped] = useState('');
   const [error, setError] = useState('');
+  const [apps, setApps] = useState<{ id: string; name: string; createdAt: number; usedAt: number | null }[] | null>(null);
   const load = useCallback(() => api<{ sessions: Session[] }>('/sessions').then((r) => setSessions(r.sessions)), []);
+  const loadApps = useCallback(() => api<{ apps: NonNullable<typeof apps> }>('/oauth/tokens').then((r) => setApps(r.apps)), []);
   useEffect(() => {
     void load();
-  }, [load]);
+    void loadApps();
+  }, [load, loadApps]);
+  const disconnect = async (id: string) => {
+    await api(`/oauth/tokens/${id}`, { method: 'DELETE' });
+    void loadApps();
+  };
 
   const end = async (id?: string) => {
     await api(id ? `/sessions/${id}` : '/sessions', { method: 'DELETE' });
@@ -569,6 +576,32 @@ export function Settings({ me }: Ctx) {
           <button className="ac-btn" onClick={() => end()}>
             Sign out everywhere else
           </button>
+        )}
+      </Card>
+
+      <Card title="Connected apps">
+        {!apps ? (
+          <p className="ac-mute">Loading…</p>
+        ) : apps.length === 0 ? (
+          <p className="ac-mute">
+            None yet. Connect Claude on the web or your phone from <a href="/account/claude">Use in Claude</a>.
+          </p>
+        ) : (
+          <ul className="ac-sessions">
+            {apps.map((a) => (
+              <li key={a.id}>
+                <span>
+                  <b>{a.name}</b>
+                  <small>
+                    Connected {when(a.createdAt, me.timezone)} · last used {ago(a.usedAt)}
+                  </small>
+                </span>
+                <button className="ac-link" onClick={() => disconnect(a.id)}>
+                  Disconnect
+                </button>
+              </li>
+            ))}
+          </ul>
         )}
       </Card>
 
