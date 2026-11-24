@@ -1920,3 +1920,104 @@
   align-items: center;
   gap: 6px;
 }
+
+/* ── GTA VI ── */
+.ws-gta-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(280px, 1fr);
+  gap: 20px;
+  align-items: start;
+  scroll-margin-top: 80px;
+}
+.ws-gta-builder .ws-url {
+  margin-bottom: 16px;
+}
+.ws-gta-builder .ws-field {
+  margin-bottom: 12px;
+}
+.ws-gta-builder .ws-seg {
+  flex-wrap: wrap;
+}
+.ws-gta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+.ws-gta-card {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border: 1px solid var(--border);
+  border-radius: var(--o-r-lg);
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color 0.2s var(--o-ease), transform 0.2s var(--o-ease);
+}
+.ws-gta-card:hover {
+  border-color: var(--border-2);
+  transform: translateY(-2px);
+}
+.ws-gta-thumb {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  background: var(--surface-2);
+}
+.ws-gta-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ws-gta-time,
+.ws-gta-live {
+  position: absolute;
+  bottom: 8px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.78);
+  color: #fff;
+  font: 500 12px/1.4 var(--o-mono);
+}
+.ws-gta-time {
+  right: 8px;
+}
+.ws-gta-live {
+  left: 8px;
+  background: var(--o-pink);
+  font-family: var(--o-body);
+  font-weight: 600;
+}
+.ws-gta-body {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: 14px;
+}
+.ws-gta-body b {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.35;
+}
+.ws-gta-body small {
+  color: var(--text-2);
+  font-size: 13px;
+}
+.ws-gta-body .ac-btn {
+  justify-self: start;
+  margin-top: 6px;
+}
+.ws-gta-auto {
+  margin-top: 24px;
+}
+.ws-gta-auto .ws-url {
+  margin: 14px 0 4px;
+}
+@media (max-width: 980px) {
+  .ws-gta-top {
+    grid-template-columns: 1fr;
+  }
+}

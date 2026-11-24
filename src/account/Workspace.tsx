@@ -15,9 +15,10 @@ import {
   Sparkles,
   type LucideIcon,
 } from 'lucide-react';
-import { useEffect, useMemo, useState, type MouseEvent, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import { STYLES, VOICE_LANGUAGES } from '../docs/data';
 import { ago } from './api';
+import { GTA_PICKED, GTA_VIDEOS, gtaPrompt, type GtaFocus, type GtaKind, type GtaVideo } from './gta';
 import { FREE_STYLES, plan as planOf } from './plans';
 import { autopilotPrompt, BEST_HOURS, clipPrompt, DEFAULT_CHOICES, DEFAULT_SCHEDULE, EDITS, nextSlots, PLATFORMS, schedulePrompt, zonedNow, type ClipChoices, type Edit, type ScheduleChoices, type WatchChoices } from './prompts';
 import { Card, CopyLine, Head, useKeys, type Ctx, type Go } from './ui';
@@ -728,6 +729,109 @@ export function Schedule({ me }: Ctx) {
           <p className="ac-fine">The Studio is a private page on your computer. Open it with:</p>
           <CopyLine text="uvx orilos-mcp studio" />
         </div>
+      </Card>
+    </>
+  );
+}
+
+/* ── GTA VI ────────────────────────────────────────────────── */
+
+function compact(n: number) {
+  return n >= 1e6 ? `${(n / 1e6).toFixed(n >= 1e7 ? 0 : 1)}M` : n >= 1e3 ? `${Math.round(n / 1e3)}K` : String(n);
+}
+function clock(sec: number) {
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = String(sec % 60).padStart(2, '0');
+  return h ? `${h}:${String(m).padStart(2, '0')}:${s}` : `${m}:${s}`;
+}
+const GTA_KINDS: [GtaKind | 'all', string][] = [['all', 'All'], ['stream', 'Streams'], ['gameplay', 'Gameplay'], ['chaos', 'Chaos and funny']];
+
+export function GtaHub(_: Ctx) {
+  const [url, setUrl] = useState('');
+  const [focus, setFocus] = useState<GtaFocus>('best');
+  const [clips, setClips] = useState(5);
+  const [kind, setKind] = useState<GtaKind | 'all'>('all');
+  const [streamer, setStreamer] = useState('');
+  const builder = useRef<HTMLDivElement>(null);
+  const shown = GTA_VIDEOS.filter((v) => kind === 'all' || v.kind === kind);
+  const pick = (v: GtaVideo) => {
+    setUrl(`https://www.youtube.com/watch?v=${v.id}`);
+    if (v.kind === 'stream') setFocus('reactions');
+    builder.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  return (
+    <>
+      <Head title="GTA VI" sub="GTA VI is out. Turn its best moments into shorts, cut and captioned on your computer." />
+
+      <div ref={builder} className="ws-gta-top">
+        <Card title="Clip a GTA VI video" className="ws-gta-builder">
+          <label className="ws-url">
+            <Link2 size={20} aria-hidden="true" />
+            <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="Paste a GTA VI video, VOD or stream link" aria-label="GTA VI video link" inputMode="url" />
+          </label>
+          <Field label="Focus on">
+            <Seg<GtaFocus>
+              label="Focus"
+              value={focus}
+              onChange={setFocus}
+              options={[['best', 'Best moments'], ['chases', 'Chases and crashes'], ['funny', 'Funny NPCs'], ['missions', 'Heists and missions'], ['reactions', 'Streamer reactions']]}
+            />
+          </Field>
+          <Field label="Clips">
+            <Seg label="Number of clips" value={clips} onChange={setClips} options={[3, 5, 8, 12].map((n) => [n, String(n)] as [number, string])} />
+          </Field>
+          <PromptOut text={gtaPrompt(url, focus, clips)} />
+        </Card>
+        <Card title="Why it works for GTA" className="ws-gta-why">
+          <ul className="ws-plan-steps ws-ticks">
+            <li>The gaming edit keeps the action uncut and zooms on the peaks.</li>
+            <li>On Twitch, Kick and YouTube streams it finds the moments chat exploded.</li>
+            <li>Every clip credits the creator with a “via” tag.</li>
+            <li>Long streams are fine: it downloads only the moments it keeps.</li>
+          </ul>
+        </Card>
+      </div>
+
+      <Section
+        title="Trending GTA VI videos"
+        sub="Pick one and press Clip this, or paste any GTA VI link above."
+        action={<Seg<GtaKind | 'all'> label="Show" value={kind} onChange={setKind} options={GTA_KINDS} />}
+      >
+      <div className="ws-gta-grid">
+        {shown.map((v) => (
+          <article key={v.id} className="ws-gta-card">
+            <a className="ws-gta-thumb" href={`https://www.youtube.com/watch?v=${v.id}`} target="_blank" rel="noreferrer" aria-label={`Watch ${v.title} on YouTube`}>
+              <img src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`} alt="" loading="lazy" width="480" height="360" />
+              <span className="ws-gta-time">{clock(v.seconds)}</span>
+              {v.kind === 'stream' && <span className="ws-gta-live">Stream</span>}
+            </a>
+            <div className="ws-gta-body">
+              <b title={v.title}>{v.title}</b>
+              <small>
+                {v.channel} · {compact(v.views)} views
+              </small>
+              <button className="ac-btn pink small" onClick={() => pick(v)}>
+                Clip this
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+      </Section>
+      <p className="ac-fine">
+        Popular on YouTube, picked {GTA_PICKED}. Thumbnails and videos belong to their creators; GTA VI is by Rockstar Games. Clip what you have the rights to or the
+        creator's permission for.
+      </p>
+
+      <Card title="Clip a GTA VI streamer every time they go live" className="ws-gta-auto">
+        <p className="ac-mute">Autopilot watches a Twitch, Kick or YouTube channel and clips each stream's hottest moments for your review. Part of Pro.</p>
+        <label className="ws-url">
+          <Radio size={20} aria-hidden="true" />
+          <input value={streamer} onChange={(e) => setStreamer(e.target.value)} placeholder="https://www.twitch.tv/name" aria-label="Streamer channel link" inputMode="url" />
+        </label>
+        <PromptOut text={autopilotPrompt({ channel: streamer, mode: 'review', clips: 5, platforms: [] })} />
       </Card>
     </>
   );

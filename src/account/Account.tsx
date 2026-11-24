@@ -4,6 +4,7 @@ import {
   CalendarClock,
   Captions,
   CreditCard,
+  Gamepad2,
   Home as HomeIcon,
   KeyRound,
   LifeBuoy,
@@ -28,7 +29,7 @@ import { api, ApiError, getMe, type Me } from './api';
 import { ClaudeConnect } from './Connect';
 import { Billing, Keys, Profile, Settings } from './Manage';
 import { applyTheme, Avatar, Center, PlanChip, savedTheme, type Ctx, type Go, type Theme } from './ui';
-import { Autopilot, Create, Home, Schedule, Styles, Voices } from './Workspace';
+import { Autopilot, Create, GtaHub, Home, Schedule, Styles, Voices } from './Workspace';
 import './account.css';
 import './workspace.css';
 
@@ -53,6 +54,7 @@ const GROUPS: { label: string; tabs: Tab[] }[] = [
       { path: '/account/create', label: 'Clip builder', icon: Wand2, page: Create },
       { path: '/account/styles', label: 'Caption styles', icon: Captions, page: Styles },
       { path: '/account/voices', label: 'Voices', icon: Mic, page: Voices },
+      { path: '/account/gta', label: 'GTA VI', icon: Gamepad2, page: GtaHub },
     ],
   },
   {

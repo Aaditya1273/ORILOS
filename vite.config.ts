@@ -10,7 +10,7 @@ function csp(): Plugin {
     "script-src 'self' https://cdn.paddle.com",
     "frame-src https://buy.paddle.com https://sandbox-buy.paddle.com",
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' blob: data: https://images.unsplash.com https://*.googleusercontent.com https://*.paddle.com",
+    "img-src 'self' blob: data: https://images.unsplash.com https://*.googleusercontent.com https://*.paddle.com https://i.ytimg.com",
     "font-src 'self' data:",
     `connect-src ${connect}`,
     "object-src 'none'",
