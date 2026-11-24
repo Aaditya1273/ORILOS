@@ -584,7 +584,7 @@ export function Settings({ me }: Ctx) {
           <p className="ac-mute">Loading…</p>
         ) : apps.length === 0 ? (
           <p className="ac-mute">
-            None yet. Connect Claude on the web or your phone from <a href="/account/claude">Use in Claude</a>.
+            None yet. Connect claude.ai on the web or your phone from <a href="/account/connect#web">Connect AI</a>.
           </p>
         ) : (
           <ul className="ac-sessions">

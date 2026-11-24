@@ -86,11 +86,17 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
+/** One button: copies the sentence for the AI. The sentence itself shows on hover, not as a wall of text. */
 function PromptOut({ text }: { text: string }) {
+  const [copied, copy] = useCopy();
+  const done = copied === text;
   return (
     <div className="ws-out">
-      <p className="ws-label-sm">Paste this into Claude Code or Codex</p>
-      <CopyLine text={text} label="Copy prompt" />
+      <button type="button" className={`ac-btn pink ws-copy-prompt${done ? ' done' : ''}`} onClick={() => copy(text)} title={text} aria-label={`Copy prompt: ${text}`}>
+        {done ? <Check size={18} aria-hidden="true" /> : <Copy size={18} aria-hidden="true" />}
+        {done ? 'Copied' : 'Copy prompt'}
+      </button>
+      <span className="ac-fine">{done ? 'Now paste it into your AI.' : 'Then paste it into Claude Code, Codex, Cursor or claude.ai.'}</span>
     </div>
   );
 }

@@ -44,7 +44,7 @@ export function Consent() {
           <>
             <h1>That didn't work</h1>
             <p className="ac-mute">{error}</p>
-            <a className="ac-btn wide" href="/account/claude">
+            <a className="ac-btn wide" href="/account/connect#web">
               Back to ORILOS
             </a>
           </>

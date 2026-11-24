@@ -1880,7 +1880,7 @@
   margin: 4px 0 0;
 }
 
-/* ── Use in Claude ── */
+/* ── Connect AI ── */
 .ws .ac-card.ws-link-status {
   display: flex;
   align-items: center;
@@ -2040,4 +2040,93 @@
   .ws-seg button.on {
     border-color: var(--text);
   }
+}
+
+.ws-apps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.ws-apps button {
+  display: grid;
+  gap: 4px;
+  padding: 16px 18px;
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: var(--o-r-lg);
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color 0.15s var(--o-ease), background 0.15s var(--o-ease);
+}
+.ws-apps button:hover {
+  border-color: var(--border-2);
+}
+.ws-apps button.on {
+  border-color: color-mix(in srgb, var(--o-pink) 70%, transparent);
+  background: color-mix(in srgb, var(--o-pink) 9%, var(--surface));
+}
+.ws-apps b {
+  font-size: 15px;
+  font-weight: 600;
+}
+.ws-apps small {
+  color: var(--text-2);
+  font-size: 13px;
+}
+.ws-app-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0 0 18px;
+}
+.ws-app-list span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+}
+.ws-app-list svg {
+  color: var(--o-pink);
+}
+.ws-config {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--o-r);
+  background: var(--field-bg);
+  color: var(--text);
+  font: 13px/1.6 var(--o-mono);
+  overflow-x: auto;
+}
+.ws-connect-steps .ac-copy + .ac-copy {
+  margin-top: -2px;
+}
+@media (max-width: 760px) {
+  .ws-apps {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Copy prompt: one clear action instead of a box of text */
+.ws-out {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+.ws-copy-prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  font-weight: 600;
+}
+.ws-copy-prompt.done {
+  background: #22c55e !important;
+  border-color: #22c55e !important;
+  color: #04130a !important;
+}
+.ws-out .ac-fine {
+  margin: 0;
 }
