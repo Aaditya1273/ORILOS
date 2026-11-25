@@ -8,7 +8,7 @@
 
 <p align="center">
   Paste a link into Claude Code or Codex. Get captioned, hooked, vertical shorts, ready to post.<br>
-  Free. No AI key. On your own computer.
+  Free. No AI key. On your own computer...
 </p>
 
 <p align="center">
